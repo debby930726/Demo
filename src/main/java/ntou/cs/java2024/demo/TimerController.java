@@ -11,6 +11,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 
 public class TimerController {
 
@@ -20,14 +21,18 @@ public class TimerController {
     @FXML
     private ComboBox<String> timeComboBox;
 
+    @FXML
+    private ComboBox<String> subjectComboBox;
+
     private int workTimeSeconds = 25 * 60; // Default work time: 25 minutes
-    private int breakTimeSeconds = 1 * 10; // Default break time: 5 minutes
+    private int breakTimeSeconds = 5 * 60; // Default break time: 5 minutes
     private int currentTimeSeconds = workTimeSeconds;
     private boolean isWorking = true;
     private Timeline timeline;
-    private boolean timerStarted = false; // 标志计时器是否已启动
-    private TimeRecord timeRecord = new TimeRecord(); // 实例化 TimeRecord 类
-    private  boolean record=true;
+    private boolean timerStarted = false;
+    private TimeRecord timeRecord = new TimeRecord();
+    private SubjectRecord subjectRecord = new SubjectRecord();
+    private int pomodoroCount = 1;
 
     @FXML
     private Label timerText;
@@ -44,14 +49,13 @@ public class TimerController {
     private void updateTimeSettings() {
         String selectedTime = timeComboBox.getValue();
         if (selectedTime.equals("50 minutes")) {
-            workTimeSeconds = 2 * 10;
-            currentTimeSeconds = workTimeSeconds;
-            record=true;
+            workTimeSeconds = 50 * 60;
+            pomodoroCount = 2;
         } else {
-            workTimeSeconds = 1 * 10; // Default work time: 25 minutes
-            currentTimeSeconds = workTimeSeconds;
-            record=false;
+            workTimeSeconds = 25 * 60;
+            pomodoroCount = 1;
         }
+        currentTimeSeconds = workTimeSeconds;
         updateTimerLabel();
     }
 
@@ -85,16 +89,19 @@ public class TimerController {
     }
 
     private void switchTimer() {
-        timeline.stop(); // 在每个阶段结束后停止计时器
-        timerStarted = false; // 重置计时器启动标志
+        timeline.stop();
+        timerStarted = false;
         if (isWorking) {
             currentTimeSeconds = breakTimeSeconds;
             showAlert("Time to take a break! Please press start to begin the break.");
-
         } else {
             currentTimeSeconds = workTimeSeconds;
             showAlert("Break is over! Please select the work time and press start.");
-            timeRecord.recordPomodoro(record);
+            timeRecord.recordPomodoro(pomodoroCount == 2); // 记录番茄钟
+            String selectedSubject = subjectComboBox.getValue();
+            if (selectedSubject != null && !selectedSubject.isEmpty()) {
+                subjectRecord.recordPomodoro(selectedSubject, pomodoroCount);
+            }
         }
         isWorking = !isWorking;
         updateTimerLabel();
@@ -106,7 +113,7 @@ public class TimerController {
             alert.setTitle("Pomodoro Timer");
             alert.setHeaderText(null);
             alert.setContentText(message);
-            alert.showAndWait(); // 等待用户关闭提示框
+            alert.showAndWait();
         });
     }
 
@@ -114,5 +121,34 @@ public class TimerController {
         int minutes = currentTimeSeconds / 60;
         int remainingSeconds = currentTimeSeconds % 60;
         timerText.setText(String.format("%02d:%02d", minutes, remainingSeconds));
+    }
+
+    @FXML
+    private void addSubject() {
+        String newSubject = subjectComboBox.getEditor().getText();
+        if (newSubject != null && !newSubject.isEmpty()) {
+            subjectComboBox.getItems().add(newSubject);
+            subjectComboBox.setValue(newSubject);
+        }
+    }
+
+    @FXML
+    private void removeSubject() {
+        String selectedSubject = subjectComboBox.getValue();
+        if (selectedSubject != null && !selectedSubject.isEmpty()) {
+            subjectComboBox.getItems().remove(selectedSubject);
+            subjectComboBox.setValue(null); // Clear the selection
+            subjectRecord.removeSubject(selectedSubject); // Remove from subrecord.txt
+        }
+    }
+
+    @FXML
+    public void initialize() {
+        timeComboBox.setItems(FXCollections.observableArrayList("25 minutes", "50 minutes"));
+        timeComboBox.setValue("25 minutes"); // Set default value
+        updateTimeSettings(); // Initialize timer settings based on default value
+
+        // Load subjects from SubjectRecord and add them to subjectComboBox
+        subjectComboBox.setItems(FXCollections.observableArrayList(subjectRecord.getSubjects()));
     }
 }
