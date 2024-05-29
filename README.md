@@ -6,10 +6,10 @@ src
 ├── main
 │   ├── java
 │   │   ├── main
-│   │   │   ├── Main.java
-│   │   │   ├── MainController.java
-│   │   │   ├── SplashController.java
-│   │   │   ├── Timer.java
+│   │   │   ├── Main.java  主程式
+│   │   │   ├── MainController.java  跑主畫面
+│   │   │   ├── SplashController.java  啟動畫面
+│   │   │   ├── Timer.java  番茄鐘
 │   │   │   └── TimerController.java
 │   │   ├── analysis
 │   │   │   ├── SubjectChart.java
