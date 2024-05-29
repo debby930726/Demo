@@ -16,10 +16,10 @@ src
 │   │   │   ├── SubjectRecord.java
 │   │   │   ├── TimeChart.java
 │   │   │   └── TimeRecord.java
-│   │   └── setting
-│   │       ├── MusicPlayer.java
-│   │       ├── SettingController.java
-│   │       └── module-info.java
+│   │   ├── setting
+│   │   │   ├── MusicPlayer.java
+│   │   │   └── SettingController.java
+│   │   └─ module-info.java
 │   ├── resources
 │   │   ├── main
 │   │   │   ├── fonts
