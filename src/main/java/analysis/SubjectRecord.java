@@ -1,4 +1,5 @@
-package ntou.cs.java2024.demo;
+package analysis;
+import javafx.scene.paint.Color;
 
 import java.io.*;
 import java.util.HashMap;
@@ -7,10 +8,12 @@ import java.util.Set;
 
 public class SubjectRecord {//存取subject資料
     private Map<String, Integer> subjectMap;
-    private final String filePath = "C:/Users/debby/OneDrive/桌面/MyFile/Code/JAVA/Demo/src/main/java/ntou/cs/java2024/demo/subrecord.txt";
+    private Map<String, Color> colorMap;
+    private final String filePath = "/main/resources/analysis/record/subrecord.txt";
 
     public SubjectRecord() {
         subjectMap = new HashMap<>();
+        colorMap = new HashMap<>();
         loadFromFile();
     }
 
@@ -30,6 +33,13 @@ public class SubjectRecord {//存取subject資料
                 writer.write(entry.getKey() + ": " + entry.getValue());
                 writer.newLine();
             }
+            // 保存顏色信息
+            writer.write("--colors--");
+            writer.newLine();
+            for (Map.Entry<String, Color> entry : colorMap.entrySet()) {
+                writer.write(entry.getKey() + ": " + entry.getValue().toString());
+                writer.newLine();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,12 +48,22 @@ public class SubjectRecord {//存取subject資料
     private void loadFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
+            boolean readingColors = false;
             while ((line = reader.readLine()) != null) {
+                if (line.equals("--colors--")) {
+                    readingColors = true;
+                    continue;
+                }
                 String[] parts = line.split(":");
                 if (parts.length == 2) {
                     String subject = parts[0].trim();
-                    int count = Integer.parseInt(parts[1].trim());
-                    subjectMap.put(subject, count);
+                    if (readingColors) {
+                        Color color = Color.web(parts[1].trim());
+                        colorMap.put(subject, color);
+                    } else {
+                        int count = Integer.parseInt(parts[1].trim());
+                        subjectMap.put(subject, count);
+                    }
                 }
             }
         } catch (IOException e) {

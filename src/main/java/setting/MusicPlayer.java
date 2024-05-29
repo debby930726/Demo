@@ -1,21 +1,21 @@
-package demo.test.demo2;
+package setting;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Stage;
 import java.io.File;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class MusicPlayer extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // 設置歌曲路徑
-        String musicFilePath = "C:/Users/su/Downloads/臨界ダイバー　歌ってみたのはメガテラ・ゼロ (320).mp3";
+        String musicFilePath = "/setting/sounds/作業(128kbps).mp3";
         Media media = new Media(new File(musicFilePath).toURI().toString());
         MediaPlayer mediaPlayer = new MediaPlayer(media);
         // 創建按鈕

@@ -1,4 +1,4 @@
-module ntou.cs.java2024.demo {
+module analysis {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -10,7 +10,11 @@ module ntou.cs.java2024.demo {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires javafx.media;
+    requires java.prefs;
 
-    opens ntou.cs.java2024.demo to javafx.fxml;
-    exports ntou.cs.java2024.demo;
+    opens analysis to javafx.fxml;
+    exports analysis;
+    opens main to javafx.fxml;
+    exports main;
 }

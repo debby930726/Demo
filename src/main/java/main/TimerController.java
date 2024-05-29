@@ -1,11 +1,17 @@
-package demo.test.demo2;
+package main;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -14,6 +20,8 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
+import setting.SettingsController;
+
 import java.util.prefs.Preferences;
 import java.io.IOException;
 import java.io.File;
@@ -147,6 +155,20 @@ public class TimerController {
         }
     }
 
+    public static class ColorPickerController {
+
+        @FXML
+        private Pane myPane;
+
+        @FXML
+        private ColorPicker myColorPicker;
+
+        public void changeColor(ActionEvent event) {
+            Color mycolor = myColorPicker.getValue();
+            myPane.setBackground(new Background(new BackgroundFill(mycolor, null, null)));
+        }
+    }
+
     public void setFontSize(int size) {
         timerText.setFont(new Font(size));
     }
@@ -222,6 +244,5 @@ public class TimerController {
             }
         }
     }
-
 
 }

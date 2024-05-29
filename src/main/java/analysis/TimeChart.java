@@ -1,4 +1,4 @@
-package ntou.cs.java2024.demo;
+package analysis;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
-public class TimeChart extends Application {//每日讀書時間圖表
+public class TimeChart extends Application {  // 每日讀書時間圖表
 
     private BarChart<String, Number> barChart;
     private CategoryAxis xAxis;

@@ -1,4 +1,4 @@
-package demo.test.demo2;
+package setting;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 import java.util.prefs.Preferences;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import main.TimerController;
+
 import java.io.File;
 
 public class SettingsController {

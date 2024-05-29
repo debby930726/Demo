@@ -1,4 +1,4 @@
-package ntou.cs.java2024.demo;
+package analysis;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -10,10 +10,9 @@ public class TimeRecord {//存取Time資料
     private static final String FILE_NAME = "C:/Users/debby/OneDrive/桌面/MyFile/Code/JAVA/Demo/src/main/java/ntou/cs/java2024/demo/record.txt";
     private Map<LocalDate, Integer> recordMap = new HashMap<>();
 
-    public void recordPomodoro(boolean isLongPomodoro) {
+    public void recordPomodoro() {
         LocalDate today = LocalDate.now();
-        int pomodoroCount = recordMap.getOrDefault(today, 0) + (isLongPomodoro ? 2 : 1);
-        recordMap.put(today, pomodoroCount);
+        int pomodoroCount = recordMap.getOrDefault(today, 0) + 1;
 
         try {
             File file = new File(FILE_NAME);
