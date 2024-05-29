@@ -7,7 +7,7 @@ src
 │   ├── java
 │   │   ├── main
 │   │   │   ├── Main.java  主程式
-│   │   │   ├── MainController.java  跑主畫面
+│   │   │   ├── MainController.java  主畫面
 │   │   │   ├── SplashController.java  啟動畫面
 │   │   │   ├── Timer.java  番茄鐘
 │   │   │   └── TimerController.java
@@ -26,9 +26,10 @@ src
 │   │   │   ├── images
 │   │   │   │   ├── icon.png
 │   │   │   │   └── logo.png
-│   │   │   └── record
-│   │   │       ├── main.fxml
-│   │   │       └── splash.fxml
+│   │   │   ├── style
+│   │   │   │   └── main.css 主頁外觀
+│   │   │   ├─ main.fxml
+│   │   │   └─ splash.fxml  
 │   │   ├── analysis
 │   │   │   ├── audio
 │   │   │   ├── images

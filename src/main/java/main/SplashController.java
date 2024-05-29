@@ -1,49 +1,50 @@
 package main;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.Objects;
+import java.io.IOException;
 
-public class SplashController {  //  控制啟動畫面
-
-    @FXML
-    private AnchorPane splashPane;
+public class SplashController {
 
     @FXML
-    private ImageView logoImage;
+    private Pane rootpane;
 
-    private Stage primaryStage;
-    private MainController mainController;
-
-    public void initialize(Stage primaryStage, MainController mainController) {
-        this.primaryStage = primaryStage;
-        this.mainController = mainController;
-
-        primaryStage.setTitle("讀生有伴 Study Pet");
-        primaryStage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/main/images/icon.png"))));
-
-        fadeOutSplashScreen();
+    public void startSplash(Stage primaryStage) {  // 開始啟動畫面
+        primaryStage.setResizable(false);
+        // 顯示3秒
+        Timeline timeline = new Timeline(
+                new javafx.animation.KeyFrame(
+                        Duration.seconds(2),  //  fade的時間
+                        event -> fadeOutSplash(primaryStage)
+                )
+        );
+        timeline.play();
     }
 
-    private void fadeOutSplashScreen() {
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), splashPane);  //  淡出時間是1.5s
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.0);
-        fadeOut.setDelay(Duration.seconds(6)); //  延遲5s在淡出
-        fadeOut.setOnFinished(event -> {
-            if (mainController != null) {
-                mainController.initialize(); // Use the existing MainController instance
-            } else {
-                System.out.println("MainController instance is null.");
-            }
-        });
+    private void fadeOutSplash(Stage primaryStage) {  //  fadeOut
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1.5), rootpane);  //  fadeOut的總時間
+        fadeTransition.setFromValue(1.0);  //  開始的透明度
+        fadeTransition.setToValue(0.0);  //  結束的透明度
+        fadeTransition.setOnFinished(event -> showMainView(primaryStage));  // 結束才執行
+        fadeTransition.play();
+    }
 
-        fadeOut.play();
+    private void showMainView(Stage primaryStage) {  //切換到主程式
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/main.fxml"));
+            Pane mainPane = loader.load();
+            Scene mainScene = new Scene(mainPane);
+            primaryStage.setScene(mainScene);
+            primaryStage.setResizable(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
