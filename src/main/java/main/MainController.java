@@ -27,20 +27,18 @@ public class MainController {  // 跑主畫面 >> 維修中！
     }
 
     public void initialize() {  //  初始化
-        //loadTimerView();
-        //loadColorPicker();
-        PauseTransition delay = new PauseTransition(Duration.seconds(2));
+        loadTimerView();
     }
-    /*
-    private void loadColorPicker() {
+
+    private void loadTimerView() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/analysis/colorPicker.fxml"));
-            Node colorPickerView = loader.load();
-            chartPane.getChildren().add(colorPickerView);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/timer.fxml"));
+            Node TimerView = loader.load();
+            mainStackPane.getChildren().add(TimerView);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    */
+
 
 }

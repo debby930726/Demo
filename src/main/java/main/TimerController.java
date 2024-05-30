@@ -10,8 +10,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -47,8 +47,15 @@ public class TimerController {
 
     @FXML
     private Label timerText;
+
     @FXML
     private Label workingStatusLabel;
+
+    @FXML
+    private ColorPicker myColorPicker;
+
+    @FXML
+    private Rectangle rectanglePalette;
 
     private Preferences preferences;
 
@@ -57,6 +64,12 @@ public class TimerController {
         autoStartPomodoros = preferences.getBoolean("autoStartPomodoros", false);
         autoStartBreaks = preferences.getBoolean("autoStartBreaks", false);
     }
+
+    public void changeColor(ActionEvent event) {  // 選取顏色 < 待改 > 尚未儲存成資料！
+        Color mycolor = myColorPicker.getValue();
+        rectanglePalette.setFill(mycolor);
+    }
+
 
     @FXML
     private void updateTimeSettings() {
@@ -139,34 +152,20 @@ public class TimerController {
 
     @FXML
     private void openSettings() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Settings-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("Settings");
+    try {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Settings-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Settings");
 
-            SettingsController controller = fxmlLoader.getController();
-            controller.setTimerController(this);
+        SettingsController controller = fxmlLoader.getController();
+        controller.setTimerController(this);
 
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        stage.show();
+    } catch (IOException e) {
+        e.printStackTrace();
     }
-
-    public static class ColorPickerController {
-
-        @FXML
-        private Pane myPane;
-
-        @FXML
-        private ColorPicker myColorPicker;
-
-        public void changeColor(ActionEvent event) {
-            Color mycolor = myColorPicker.getValue();
-            myPane.setBackground(new Background(new BackgroundFill(mycolor, null, null)));
-        }
     }
 
     public void setFontSize(int size) {

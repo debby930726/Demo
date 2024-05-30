@@ -6,8 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TimeRecord {//存取Time資料
-    private static final String FILE_NAME = "C:/Users/debby/OneDrive/桌面/MyFile/Code/JAVA/Demo/src/main/java/ntou/cs/java2024/demo/record.txt";
+public class TimeRecord {  //  存取Time資料
+    private static final String FILE_NAME = "/main/resources/analysis/record/record.txt";
     private Map<LocalDate, Integer> recordMap = new HashMap<>();
 
     public void recordPomodoro() {
