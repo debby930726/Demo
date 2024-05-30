@@ -42,8 +42,8 @@ public class TimerController {
     private boolean autoStartPomodoros;
     private boolean autoStartBreaks;
     private Timeline timeline;
-    private MediaPlayer workingMediaPlayer;
-    private MediaPlayer ringPlayer;
+    private MusicManager workingMediaPlayer = new MusicManager();
+    private MusicManager ringPlayer = new MusicManager();
 
     @FXML
     private Label timerText;
@@ -106,7 +106,11 @@ public class TimerController {
             if (currentTimeSeconds <= 0) {
                 switchTimer();
                 setWorkingStatusLabel();
-                switchWorkingMediaPlayer();
+                if (isWorking && isCounting) {
+                    workingMediaPlayer.play();
+                } else {
+                    workingMediaPlayer.stop();
+                }
                 if (ringPlayer != null){
                     ringPlayer.stop();
                     ringPlayer.play();
@@ -152,20 +156,20 @@ public class TimerController {
 
     @FXML
     private void openSettings() {
-    try {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Settings-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Settings");
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Settings-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Settings");
 
-        SettingsController controller = fxmlLoader.getController();
-        controller.setTimerController(this);
+            SettingsController controller = fxmlLoader.getController();
+            controller.setTimerController(this);
 
-        stage.show();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setFontSize(int size) {
@@ -200,48 +204,12 @@ public class TimerController {
             workingStatusLabel.setText("Break");
         }
     }
-    //音樂及其音量設定
-    public void setWorkingSound(String selectedSound) {
-        if (selectedSound.equals("No Sound")) {
-            workingMediaPlayer = null;
-        } else {
-            // Create a media object with the selected sound file
-            Media media = new Media(new File("C:/Users/su/Desktop/javaprojects/demo2/src/main/sounds/" + selectedSound).toURI().toString());
-            // Create a media player
-            workingMediaPlayer = new MediaPlayer(media);
-            workingMediaPlayer.setVolume(preferences.getDouble("volume", 0.5));
-            //結束則自動重頭撥放
-            workingMediaPlayer.setOnEndOfMedia(() -> workingMediaPlayer.seek(Duration.ZERO));
-        }
-    }
 
-    public void setRing(String selectedRing) {
-        if (selectedRing.equals("No Sound")) {
-            ringPlayer = null;
-        } else {
-            Media media = new Media(new File("C:/Users/su/Desktop/javaprojects/demo2/src/main/rings/" + selectedRing).toURI().toString());
-            // Create a media player
-            ringPlayer = new MediaPlayer(media);
-            ringPlayer.setVolume(preferences.getDouble("volume", 0.5));
-        }
-    }
-
-    public MediaPlayer getWorkingMediaPlayer() {
+    public MusicManager getWorkingMediaPlayer() {
         return workingMediaPlayer;
     }
 
-    public MediaPlayer getRingPlayer() {
+    public MusicManager getRingPlayer() {
         return ringPlayer;
     }
-
-    public void switchWorkingMediaPlayer() {
-        if (workingMediaPlayer != null) {
-            if (isWorking && isCounting) {
-                workingMediaPlayer.play();
-            } else {
-                workingMediaPlayer.stop();
-            }
-        }
-    }
-
 }

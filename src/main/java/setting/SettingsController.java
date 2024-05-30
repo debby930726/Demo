@@ -64,7 +64,7 @@ public class SettingsController {
         });
         ringVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (timerController != null && timerController.getRingPlayer() != null) {
-                timerController.getRingPlayer().setVolume(newValue.doubleValue());
+                timerController.getRingPlayer().setRingVolume(newValue.doubleValue());
             }
         });
     }
@@ -111,7 +111,7 @@ public class SettingsController {
     private void applyWorkingSoundSettings() {
         if (timerController != null) {
             String selectedSound = workingSoundComboBox.getValue();
-            timerController.setWorkingSound(selectedSound);
+            timerController.getWorkingMediaPlayer().setWorkingSound(selectedSound);
         }
     }
 
@@ -119,7 +119,7 @@ public class SettingsController {
     private void applyRingSettings() {
         if (timerController != null) {
             String selectedRing = ringComboBox.getValue();
-            timerController.setRing(selectedRing);
+            timerController.getRingPlayer().setRing(selectedRing);
         }
     }
 
