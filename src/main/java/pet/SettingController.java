@@ -12,6 +12,7 @@ import javafx.scene.image.*;
 import javafx.scene.Node;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import javafx.scene.input.MouseEvent;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,14 +44,6 @@ public class SettingController { // PetSetting的控制項
     private Pane drawingPane2; // 放配件
 
     private Rectangle rectangle;
-
-    private double initialX;
-    private double initialY;
-    private double mouseX;
-    private double mouseY;
-
-    private double x = 0;
-    private double y = 0;
 
     private List<String> pets;
 
@@ -168,7 +161,7 @@ public class SettingController { // PetSetting的控制項
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(" ");
                 if (parts.length > 1) {
-                    pets.add(parts[0].trim() + " (" + parts[1].trim() + ")");
+                    pets.add(parts[0].trim() + " " + parts[1].trim()); // 修改這裡，加載 petDetails 和 petName
                 }
             }
         }
@@ -188,7 +181,7 @@ public class SettingController { // PetSetting的控制項
                     if (petDetails.equals(name[0])) {
                         petName = newName;
                     }
-                    updatedPets.add(petDetails + " " + petName); // 更新後的格式
+                    updatedPets.add(petDetails + " " + petName+ " " + parts[2]); // 更新後的格式
                 }
             }
         }
@@ -343,7 +336,7 @@ public class SettingController { // PetSetting的控制項
         });
     }
 
-    private int getTomatoCountFromSubRecord(String petName) {
+    private int getTomatoCountFromSubRecord(String petName) { //獲取執行幾次番茄鐘
         int tomatoCount = 0;
         try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/analysis/record/subrecord.txt"))) {
             String line;

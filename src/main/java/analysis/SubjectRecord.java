@@ -17,6 +17,11 @@ public class SubjectRecord { //存取subject資料
         loadFromFile();
     }
 
+    public void recordColor(String subject, Color color) {
+        colorMap.put(subject, color);
+        saveToFile();
+    }
+
     public void recordPomodoro(String subject, int count) {
         subjectMap.put(subject, subjectMap.getOrDefault(subject, 0) + count);
         saveToFile();
@@ -30,14 +35,13 @@ public class SubjectRecord { //存取subject資料
     private void saveToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (Map.Entry<String, Integer> entry : subjectMap.entrySet()) {
-                writer.write(entry.getKey() + ": " + entry.getValue());
+                writer.write(entry.getKey() + ":" + entry.getValue());
                 writer.newLine();
             }
-            // 保存顏色信息
             writer.write("--colors--");
             writer.newLine();
             for (Map.Entry<String, Color> entry : colorMap.entrySet()) {
-                writer.write(entry.getKey() + ": " + entry.getValue().toString());
+                writer.write(entry.getKey() + ":" + colorToString(entry.getValue()));
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -71,7 +75,22 @@ public class SubjectRecord { //存取subject資料
         }
     }
 
+    private String colorToString(Color color) {
+        return String.format("#%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
+    }
+
+    private Color stringToColor(String value) {
+        return Color.web(value);
+    }
+
     public Set<String> getSubjects() {
         return subjectMap.keySet();
+    }
+
+    public Color getColor(String subject) {
+        return colorMap.get(subject);
     }
 }

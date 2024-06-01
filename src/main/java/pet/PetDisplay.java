@@ -16,7 +16,7 @@ public class PetDisplay extends Application { //Pet的主要畫面
             throw new IOException("Cannot find FXML file");
         }
         FXMLLoader fxmlLoader = new FXMLLoader(fxmlLocation);
-        Scene scene = new Scene(fxmlLoader.load(), 300, 500);
+        Scene scene = new Scene(fxmlLoader.load(), 300, 550);
         stage.setScene(scene);
         stage.setTitle("Pet Display");
         stage.setResizable(false);

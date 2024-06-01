@@ -39,6 +39,13 @@ public class TimerController {
     @FXML
     private Label timerText;
 
+
+    @FXML
+    private ColorPicker colorPicker;
+
+    @FXML
+    private Rectangle palette;
+
     @FXML
     protected void start() {
         if (!timerStarted) {
@@ -48,14 +55,15 @@ public class TimerController {
     }
 
     @FXML
-    private ColorPicker colorPicker;
-
-    @FXML
-    private Rectangle palette;
-
-    public void changeColor(ActionEvent event) {  // 新增選取顏色 < 待改 > 尚未儲存成資料！
+    public void changeColor(ActionEvent event) {
         Color mycolor = colorPicker.getValue();
         palette.setFill(mycolor);
+
+        String selectedSubject = subjectComboBox.getValue();
+        if (selectedSubject != null && !selectedSubject.isEmpty()) {
+            subjectRecord.recordColor(selectedSubject, mycolor);
+        }
+
     }
 
     @FXML
@@ -76,6 +84,11 @@ public class TimerController {
     private void startTimer() {
         if (timeline != null) {
             timeline.stop();
+        }
+
+        if (subjectComboBox.getValue() == null || subjectComboBox.getValue().isEmpty()) {
+            showAlert("Please select a subject before starting the timer.");
+            return;
         }
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
@@ -99,6 +112,45 @@ public class TimerController {
         timerStarted = false;
         updateTimerLabel();
         startButton.setText("Start");
+    }
+
+    @FXML
+    private void addSubject() { //新增subject
+        String newSubject = subjectComboBox.getEditor().getText();
+        if (newSubject != null && !newSubject.isEmpty()) {
+            subjectComboBox.getItems().add(newSubject);
+            subjectComboBox.setValue(newSubject);
+            subjectRecord.recordPomodoro(newSubject, 0);
+        }
+    }
+
+    @FXML
+    private void removeSubject() { //移除subject
+        String selectedSubject = subjectComboBox.getValue();
+        if (selectedSubject != null && !selectedSubject.isEmpty()) {
+            subjectComboBox.getItems().remove(selectedSubject);
+            subjectComboBox.setValue(null); // Clear the selection
+            subjectRecord.removeSubject(selectedSubject); // Remove from subrecord.txt
+        }
+    }
+
+    @FXML
+    public void initialize() { //顯示給人選擇時間的combobox
+        timeComboBox.setItems(FXCollections.observableArrayList("25 minutes", "50 minutes"));
+        timeComboBox.setValue("25 minutes"); // Set default value
+        updateTimeSettings(); // Initialize timer settings based on default value
+
+        // Load subjects from SubjectRecord and add them to subjectComboBox
+        subjectComboBox.setItems(FXCollections.observableArrayList(subjectRecord.getSubjects()));
+        subjectComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !newVal.isEmpty()) {
+                Color color = subjectRecord.getColor(newVal);
+                if (color != null) {
+                    colorPicker.setValue(color);
+                    palette.setFill(color);
+                }
+            }
+        });
     }
 
     private void switchTimer() {
@@ -136,33 +188,6 @@ public class TimerController {
         int remainingSeconds = currentTimeSeconds % 60;
         timerText.setText(String.format("%02d:%02d", minutes, remainingSeconds));
     }
-    @FXML
-    private void addSubject() { //新增subject
-        String newSubject = subjectComboBox.getEditor().getText();
-        if (newSubject != null && !newSubject.isEmpty()) {
-            subjectComboBox.getItems().add(newSubject);
-            subjectComboBox.setValue(newSubject);
-            subjectRecord.recordPomodoro(newSubject, 0);
-        }
-    }
 
-    @FXML
-    private void removeSubject() { //移除subject
-        String selectedSubject = subjectComboBox.getValue();
-        if (selectedSubject != null && !selectedSubject.isEmpty()) {
-            subjectComboBox.getItems().remove(selectedSubject);
-            subjectComboBox.setValue(null); // Clear the selection
-            subjectRecord.removeSubject(selectedSubject); // Remove from subrecord.txt
-        }
-    }
 
-    @FXML
-    public void initialize() { //顯示給人選擇時間的combobox
-        timeComboBox.setItems(FXCollections.observableArrayList("25 minutes", "50 minutes"));
-        timeComboBox.setValue("25 minutes"); // Set default value
-        updateTimeSettings(); // Initialize timer settings based on default value
-
-        // Load subjects from SubjectRecord and add them to subjectComboBox
-        subjectComboBox.setItems(FXCollections.observableArrayList(subjectRecord.getSubjects()));
-    }
 }

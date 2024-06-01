@@ -1,5 +1,11 @@
 JAVA: 20
 Test: 8
+GAGA: 0
 FUCK: 0
 Math: 100
 --colors--
+JAVA:#CC9937
+Test:#00FF00
+GAGA:#CC0033
+FUCK:#889933
+Math:#C99933

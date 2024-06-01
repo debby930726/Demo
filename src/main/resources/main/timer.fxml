@@ -42,11 +42,6 @@
                     <Button layoutX="65.0" layoutY="151.0" mnemonicParsing="false" onAction="#addSubject" text="Add Subject" />
                     <Button layoutX="175.0" layoutY="151.0" mnemonicParsing="false" onAction="#removeSubject" text="Remove Subject" />
                <ColorPicker fx:id="colorPicker" layoutX="260.0" layoutY="114.0" onAction="#changeColor" prefHeight="23.0" prefWidth="65.0" />
-                <!---Label alignment="TOP_LEFT" layoutX="233.0" layoutY="78.0" prefHeight="16.0" prefWidth="59.0" textFill="#ea4040"-->
-                    <!---font>
-                        <Font name="Arial" size="14.0" />
-                    </font>
-                <!-/Label-->
                <Rectangle fx:id="palette" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="43.0" layoutX="343.0" layoutY="104.0" stroke="#c6c3c3" strokeType="INSIDE" width="48.0" />
                     <Button fx:id="startButton" layoutX="134.0" layoutY="14.0" mnemonicParsing="false" onAction="#startTimer" prefHeight="33.0" prefWidth="65.0" text="Start" />
                     <Button layoutX="246.0" layoutY="14.0" mnemonicParsing="false" onAction="#resetTimer" prefHeight="33.0" prefWidth="65.0" text="Reset" />

@@ -8,10 +8,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Alert;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,6 +34,8 @@ public class DisplayController {
     @FXML
     private Button settingButton2;
     @FXML
+    private Button updateButton;
+    @FXML
     private AnchorPane borderPane;
 
     @FXML
@@ -42,6 +45,7 @@ public class DisplayController {
     private TextSetting textSettings;
     private List<String> pets;
     private String petName;
+    private PetRecord petRecord; // 新增PetRecord類的成員變量
 
     @FXML
     public void initialize() {
@@ -52,6 +56,22 @@ public class DisplayController {
         border1.setStrokeWidth(2);
 
         imgpane.getChildren().add(border1);
+    }
+
+    @FXML
+    private void handleUpdateButtonAction() {
+        // 在按下 updateButton 時啟用 PetRecord
+        try {
+            ProcessBuilder pb = new ProcessBuilder("java", "-classpath", "path/to/your/classes", "pet.PetRecord");
+            pb.directory(new File("src/main/resources/analysis/record")); // 設置工作目錄
+            pb.redirectOutput(new File("update.log")); // 將輸出重定向到日誌檔案
+            Process process = pb.start();
+            process.waitFor(); // 等待過程完成
+            System.out.println("PetRecord.java 已成功執行。");
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            System.out.println("執行 PetRecord.java 時發生錯誤：" + e.getMessage());
+        }
     }
 
     @FXML
@@ -118,11 +138,15 @@ public class DisplayController {
         if (petSetting == null) {
             petSetting = new PetSetting();
             try {
-                petSetting.start(new Stage());
+                Stage stage = new Stage();
+                petSetting.start(stage);
+                stage.setOnHidden(event -> petSetting = null); // 當視窗關閉時設置petSetting為null
             } catch (Exception e) {
                 e.printStackTrace();
                 // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式
             }
+        } else {
+            System.out.println("已開啟視窗");
         }
     }
 
@@ -131,13 +155,18 @@ public class DisplayController {
         if (textSettings == null) {
             textSettings = new TextSetting();
             try {
-                textSettings.start(new Stage());
+                Stage stage = new Stage();
+                textSettings.start(stage);
+                stage.setOnHidden(event -> textSettings = null); // 當視窗關閉時設置petSetting為null
             } catch (Exception e) {
                 e.printStackTrace();
                 // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式
             }
+        } else {
+            System.out.println("已開啟視窗");
         }
     }
+
 
     private List<String> loadPets(String filePath) throws IOException {
         List<String> pets = new ArrayList<>();
@@ -177,4 +206,6 @@ public class DisplayController {
             return "";
         }
     }
+
+
 }
