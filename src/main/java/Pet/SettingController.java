@@ -23,8 +23,7 @@ import java.io.File;
 import javafx.scene.SnapshotParameters;
 import java.awt.image.BufferedImage;
 
-
-public class SettingController {
+public class SettingController { // PetSetting的控制項
 
     @FXML
     private AnchorPane anchorPane;
@@ -69,8 +68,8 @@ public class SettingController {
         double centerY = (drawingPane1.getHeight() - rectangle.getHeight()) / 2;
 
         // 設置長方形的位置
-        rectangle.setLayoutX(centerX+100);
-        rectangle.setLayoutY(centerY+123);
+        rectangle.setLayoutX(centerX + 100);
+        rectangle.setLayoutY(centerY + 123);
 
         drawingPane1.getChildren().add(rectangle);
 
@@ -90,7 +89,7 @@ public class SettingController {
         // 綁定添加按鈕的事件處理
         addButton.setOnAction(event -> handleAddButtonAction());
 
-        // 當 ComboBox 的值改變時，更新長方形的顏色
+        // 當 ComboBox 的值改變時，更新長方形的顏色和圖片數量
         petComboBox.setOnAction(event -> {
             String selectedPet = petComboBox.getValue();
             if (selectedPet != null) {
@@ -102,27 +101,19 @@ public class SettingController {
                         nodesToRemove.add(node);
                     }
                 }
-                drawingPane1.getChildren().removeAll(nodesToRemove); //更新combobox時刪除所有圖片
+                drawingPane1.getChildren().removeAll(nodesToRemove); // 更新combobox時刪除所有圖片
+
+                // 根據番茄鐘次數更新圖片
+                String petName = selectedPet.split(" ")[0];
+                int tomatoCount = getTomatoCountFromSubRecord(petName);
+                int imageCount = tomatoCount / 5;
+                loadImagesIntoPane("src/main/resources/pet/decorateimg", imageCount);
             }
         });
-    /////////////////////////
-        Image image = new Image(getClass().getResourceAsStream("eye1.jpg"));
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(50); // 設置圖片寬度
-        imageView.setFitHeight(50); // 設置圖片高度
-        drawingPane2.getChildren().add(imageView);
-        imageView.setOnMouseClicked(event -> {
-            ImageView newImageView = new ImageView(image);// 創建新的 ImageView
-            newImageView.setFitWidth(50); // 設置圖片寬度
-            newImageView.setFitHeight(50); // 設置圖片高度
-            newImageView.setLayoutX(event.getX()); // 設置新圖片的 X 座標
-            newImageView.setLayoutY(event.getY()); // 設置新圖片的 Y 座標
-            drawingPane1.getChildren().add(newImageView); // 將新圖片添加到 drawingPane1 中
-            enableDragAndDrop(newImageView); // 啟用拖放功能
-        });
-    /////////////////////////
-    }
 
+        // 預設加載所有圖片到drawingPane2中（初始化時可不顯示圖片）
+        loadImagesIntoPane("src/main/resources/pet/decorateimg", 0);
+    }
 
     @FXML
     private void handleComboBoxAction() {
@@ -134,7 +125,6 @@ public class SettingController {
             // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式
         }
     }
-
 
     @FXML
     private void handleAddButtonAction() {
@@ -160,7 +150,7 @@ public class SettingController {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         String selectedPetName = petComboBox.getValue();
         selectedPetName = selectedPetName.replaceAll("[()]", "");
-        String[] name=selectedPetName.split(" ");
+        String[] name = selectedPetName.split(" ");
         String fileName = name[1] + ".png";
         // 儲存圖片
         File file = new File("src/main/resources/pet/" + fileName);
@@ -171,8 +161,6 @@ public class SettingController {
             e.printStackTrace();
         }
     }
-
-
 
     private List<String> loadPets(String filePath) throws IOException {
         List<String> pets = new ArrayList<>();
@@ -188,7 +176,7 @@ public class SettingController {
         return pets;
     }
 
-    private void updatePetName(String filePath, String selectedPet, String newName) throws IOException { //進行修改名字
+    private void updatePetName(String filePath, String selectedPet, String newName) throws IOException { // 進行修改名字
         List<String> updatedPets = new ArrayList<>();
         String[] name = selectedPet.split(" ");
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -213,7 +201,7 @@ public class SettingController {
         }
     }
 
-    private String getColorFromPetRecord(String selectedPet) { //控制長方形顏色
+    private String getColorFromPetRecord(String selectedPet) { // 控制長方形顏色
         String color = "#000000"; // 默認為黑色
         String[] name = selectedPet.split(" ");
         try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/petrecord.txt"))) {
@@ -240,38 +228,138 @@ public class SettingController {
         final Delta dragDelta = new Delta();
 
         node.setOnMousePressed(mouseEvent -> {
-            // 记录拖动时的偏移量
-            dragDelta.x = node.getLayoutX() - mouseEvent.getSceneX();
-            dragDelta.y = node.getLayoutY() - mouseEvent.getSceneY();
+            if (mouseEvent.isPrimaryButtonDown()) { // 檢查左鍵是否被按下
+                dragDelta.x = node.getLayoutX() - mouseEvent.getSceneX();
+                dragDelta.y = node.getLayoutY() - mouseEvent.getSceneY();
+            }
         });
 
         node.setOnMouseDragged(mouseEvent -> {
-            // 计算新的节点位置
-            double newX = mouseEvent.getSceneX() + dragDelta.x;
-            double newY = mouseEvent.getSceneY() + dragDelta.y;
+            if (mouseEvent.isPrimaryButtonDown()) { // 檢查左鍵是否被按下
+                double newX = mouseEvent.getSceneX() + dragDelta.x;
+                double newY = mouseEvent.getSceneY() + dragDelta.y;
 
-            // 限制新位置在 drawingPane1 的范围内
-            if (newX < 0) {
-                newX = 0;
-            } else if (newX > drawingPane1.getWidth() - node.getBoundsInParent().getWidth()) {
-                newX = drawingPane1.getWidth() - node.getBoundsInParent().getWidth();
+                // 限制新位置在 drawingPane1 的範圍
+                if (newX < -20) {
+                    newX = -20;
+                } else if (newX > drawingPane1.getWidth() - node.getBoundsInParent().getWidth() + 20) {
+                    newX = drawingPane1.getWidth() - node.getBoundsInParent().getWidth() + 20;
+                }
+
+                if (newY < -20) {
+                    newY = -20;
+                } else if (newY > drawingPane1.getHeight() - node.getBoundsInParent().getHeight() + 20) {
+                    newY = drawingPane1.getHeight() - node.getBoundsInParent().getHeight() + 20;
+                }
+
+                // 更新node的位置
+                node.setLayoutX(newX);
+                node.setLayoutY(newY);
             }
-
-            if (newY < 0) {
-                newY = 0;
-            } else if (newY > drawingPane1.getHeight() - node.getBoundsInParent().getHeight()) {
-                newY = drawingPane1.getHeight() - node.getBoundsInParent().getHeight();
-            }
-
-            // 更新节点的位置
-            node.setLayoutX(newX);
-            node.setLayoutY(newY);
         });
 
+        node.setOnScroll(scrollEvent -> {
+            double scale = 1.05; // 變大
+            if (scrollEvent.getDeltaY() < 0) {
+                scale = 2.0 - scale; // 變小
+            }
+
+            node.setScaleX(node.getScaleX() * scale);
+            node.setScaleY(node.getScaleY() * scale);
+
+            if (node.getScaleX() < 0.5) {
+                node.setScaleX(0.5);
+            } else if (node.getScaleX() > 2) {
+                node.setScaleX(2);
+            }
+            if (node.getScaleY() < 0.5) {
+                node.setScaleY(0.5);
+            } else if (node.getScaleY() > 2) {
+                node.setScaleY(2);
+            }
+        });
     }
 
-    class Delta {//紀錄位置格式
+    class Delta { // 紀錄位置格式
         double x, y;
     }
 
+    private void loadImagesIntoPane(String directoryPath, int imageCountToShow) {
+        File directory = new File(directoryPath);
+        if (directory.exists() && directory.isDirectory()) {
+            File[] files = directory.listFiles((dir, name) -> name.endsWith(".png"));
+            if (files != null) {
+                int imageCount = 0;
+                double x = 0;
+                double y = 0;
+                for (File file : files) {
+                    if (imageCount >= imageCountToShow) {
+                        break;
+                    }
+                    Image image = new Image(file.toURI().toString());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(80);
+                    imageView.setFitHeight(80);
+
+                    imageView.setLayoutX(x);
+                    imageView.setLayoutY(y);
+
+                    drawingPane2.getChildren().add(imageView);
+                    imageView.setOnMouseClicked(event -> handleImageClick(event));
+                    imageCount++;
+                    if (imageCount % 3 == 0) {
+                        x = 0;
+                        y += 80;
+                    } else {
+                        x += 80;
+                    }
+                }
+            }
+        } else {
+            System.out.println("The directory does not exist or is not a directory.");
+        }
+    }
+
+    private void handleImageClick(MouseEvent event) {
+        ImageView sourceImageView = (ImageView) event.getSource();
+        Image image = sourceImageView.getImage();
+
+        ImageView newImageView = new ImageView(image);
+        newImageView.setFitWidth(50);
+        newImageView.setFitHeight(50);
+
+        // 設置圖片在drawingPane1中的初始位置
+        newImageView.setLayoutX(50);
+        newImageView.setLayoutY(50);
+        drawingPane1.getChildren().add(newImageView);
+
+        enableDragAndDrop(newImageView);
+        newImageView.setPreserveRatio(true);
+
+        // 添加雙擊事件處理器以移除圖片
+        newImageView.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getClickCount() == 2) {
+                drawingPane1.getChildren().remove(newImageView);
+            }
+        });
+    }
+
+    private int getTomatoCountFromSubRecord(String petName) {
+        int tomatoCount = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/analysis/record/subrecord.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length >= 2 && parts[0].trim().equals(petName)) {
+                    tomatoCount = Integer.parseInt(parts[1].trim());
+                    System.out.println(tomatoCount);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 處理 IO 錯誤
+        }
+        return tomatoCount;
+    }
 }

@@ -14,7 +14,7 @@ public class PetRecord {
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(":");
                 if (parts.length > 0) {
-                    bw.write(parts[0].trim());
+                    bw.write(parts[0].trim()+" "+parts[1].trim());
                     bw.newLine();
                 }
             }

@@ -10,6 +10,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.Alert;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,6 +18,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
+import javafx.scene.control.Label;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 public class DisplayController {
     @FXML
@@ -30,9 +35,13 @@ public class DisplayController {
     @FXML
     private AnchorPane borderPane;
 
+    @FXML
+    private Label infoLabel;
+
     private PetSetting petSetting;
     private TextSetting textSettings;
     private List<String> pets;
+    private String petName;
 
     @FXML
     public void initialize() {
@@ -53,22 +62,55 @@ public class DisplayController {
             // 在選擇 ComboBox 時尋找相應的圖片並插入到 Pane 中
             petComboBox.setOnAction(event -> {
                 String selectedPet = petComboBox.getValue();
-                if (selectedPet != null) {
+                if (selectedPet != null) {// 在這裡設置 petName
                     String imageName = selectedPet.substring(selectedPet.lastIndexOf(" ") + 1);
-                    System.out.println(imageName);
                     String imagePath = "src/main/resources/pet/" + imageName + ".png";
-                    Image image = new Image(new File(imagePath).toURI().toString());
-                    ImageView imageView = new ImageView(image);
-                    imageView.setFitWidth(200);
-                    imageView.setFitHeight(250);
-                    imgpane.getChildren().clear(); // 清空之前的图片
-                    imgpane.getChildren().add(imageView);
+                    File imageFile = new File(imagePath);
+                    if (imageFile.exists()) {
+                        Image image = new Image(imageFile.toURI().toString());
+                        ImageView imageView = new ImageView(image);
+                        imageView.setFitWidth(200);
+                        imageView.setFitHeight(250);
+                        imageView.setOnMouseClicked(event1 -> handleImageClick()); // 將點擊事件綁定到 handleImageClick 方法
+                        petName = imageName;
+                        imgpane.getChildren().clear();
+                        imgpane.getChildren().add(imageView);
+                        // 清空 Label
+                        infoLabel.setText("");
+                    } else {
+                        // 圖片文件不存在，顯示警告對話框
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("通知");
+                        alert.setHeaderText("找不到寵物");
+                        alert.setContentText("你還沒有創建" + imageName + "的寵物樣貌喔!");
+                        alert.showAndWait();
+                    }
                 }
             });
         } catch (IOException e) {
             e.printStackTrace();
-            // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式
         }
+    }
+
+    @FXML
+    private void handleImageClick() {
+        // 獲取當前時間
+        LocalDateTime currentTime = LocalDateTime.now();
+        // 格式化時間
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
+        String formattedTime = currentTime.format(formatter);
+
+        // 設置 Label 的文本為當前時間和圖片名字
+        String labelText = "現在是 " + formattedTime + "\n我是寵物" + petName + "\n我想跟你說";
+
+        // 從 textrecord.txt 中讀取一句話
+        String randomSentence = getRandomSentence();
+
+        // 將讀取的句子添加到 Label 的文本後面
+        labelText += "\n" + randomSentence;
+
+        // 設置 Label 的文本
+        infoLabel.setText(labelText);
     }
 
     @FXML
@@ -109,5 +151,30 @@ public class DisplayController {
             }
         }
         return pets;
+    }
+
+    private List<String> getRandomSentences() {
+        List<String> sentences = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/textrecord.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.replaceAll("<br>", "\n"); // 將替換後的結果重新賦值給 line
+                sentences.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sentences;
+    }
+
+    private String getRandomSentence() {
+        List<String> sentences = getRandomSentences();
+        if (!sentences.isEmpty()) {
+            // 隨機生成索引以選擇一個句子
+            int randomIndex = new Random().nextInt(sentences.size());
+            return sentences.get(randomIndex);
+        } else {
+            return "";
+        }
     }
 }

@@ -1,5 +1,5 @@
-JAVA: 6
+JAVA: 20
 Test: 8
 FUCK: 0
-Math: 5
+Math: 100
 --colors--
