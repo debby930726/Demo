@@ -26,7 +26,7 @@
             </StackPane>
          </right>
          <top>
-            <Label alignment="TOP_LEFT" prefHeight="7.0" prefWidth="191.0" text="讀生有伴 Study Pet" BorderPane.alignment="CENTER">
+            <Label alignment="TOP_LEFT" prefHeight="7.0" prefWidth="191.0" text="讀生有伴 Study pet" BorderPane.alignment="CENTER">
                <font>
                   <Font name="Arial" size="18.0" />
                </font>
