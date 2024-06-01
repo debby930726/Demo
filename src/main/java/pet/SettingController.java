@@ -110,7 +110,7 @@ public class SettingController { // PetSetting的控制項
     @FXML
     private void handleComboBoxAction() {
         try {
-            pets = loadPets("src/main/resources/pet/petrecord.txt");
+            pets = loadPets("src/main/resources/pet/records/petrecord.txt");
             petComboBox.getItems().setAll(pets);
         } catch (IOException e) {
             e.printStackTrace();
@@ -125,7 +125,7 @@ public class SettingController { // PetSetting的控制項
 
         if (selectedPet != null && !newName.isEmpty()) {
             try {
-                updatePetName("src/main/resources/pet/petrecord.txt", selectedPet, newName);
+                updatePetName("src/main/resources/pet/records/petrecord.txt", selectedPet, newName);
                 handleComboBoxAction(); // 更新 ComboBox
             } catch (IOException e) {
                 e.printStackTrace();
@@ -145,7 +145,7 @@ public class SettingController { // PetSetting的控制項
         String[] name = selectedPetName.split(" ");
         String fileName = name[1] + ".png";
         // 儲存圖片
-        File file = new File("src/main/resources/pet/" + fileName);
+        File file = new File("src/main/resources/pet/records/" + fileName);
         try {
             ImageIO.write(bufferedImage, "png", file);
             System.out.println("Snapshot saved to: " + file.getAbsolutePath());
@@ -196,7 +196,7 @@ public class SettingController { // PetSetting的控制項
     private String getColorFromPetRecord(String selectedPet) { // 控制長方形顏色
         String color = "#000000"; // 默認為黑色
         String[] name = selectedPet.split(" ");
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/petrecord.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/records/petrecord.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(" ");

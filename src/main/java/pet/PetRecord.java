@@ -10,7 +10,7 @@ public class PetRecord {
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
 
             // 建立 petrecord.txt 檔案
-            File outputFile = new File("src/main/resources/pet/petrecord.txt");
+            File outputFile = new File("src/main/resources/pet/records/petrecord.txt");
             FileWriter writer = new FileWriter(outputFile, true); // 使用 true 表示附加到現有檔案
 
             // 讀取檔案內容

@@ -52,7 +52,7 @@ public class TextController {
     }
 
     private void saveTextToFile(String text) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/pet/textrecord.txt", true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/pet/records/textrecord.txt", true))) {
             writer.write(text);
             writer.newLine();
         } catch (IOException e) {
@@ -61,7 +61,7 @@ public class TextController {
     }
 
     private void loadTextFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/pet/textrecord.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/pet/records/textrecord.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.replaceAll("<br>", "\n");

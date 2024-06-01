@@ -77,14 +77,14 @@ public class DisplayController {
     @FXML
     private void handleComboBoxAction() {
         try {
-            pets = loadPets("src/main/resources/pet/petrecord.txt");
+            pets = loadPets("src/main/resources/pet/records/petrecord.txt");
             petComboBox.getItems().setAll(pets);
             // 在選擇 ComboBox 時尋找相應的圖片並插入到 Pane 中
             petComboBox.setOnAction(event -> {
                 String selectedPet = petComboBox.getValue();
                 if (selectedPet != null) {// 在這裡設置 petName
                     String imageName = selectedPet.substring(selectedPet.lastIndexOf(" ") + 1);
-                    String imagePath = "src/main/resources/pet/" + imageName + ".png";
+                    String imagePath = "src/main/resources/pet/records/" + imageName + ".png";
                     File imageFile = new File(imagePath);
                     if (imageFile.exists()) {
                         Image image = new Image(imageFile.toURI().toString());
@@ -184,7 +184,7 @@ public class DisplayController {
 
     private List<String> getRandomSentences() {
         List<String> sentences = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/textrecord.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/records/textrecord.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.replaceAll("<br>", "\n"); // 將替換後的結果重新賦值給 line
