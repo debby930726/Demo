@@ -1,4 +1,4 @@
-package Pet;
+package pet;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

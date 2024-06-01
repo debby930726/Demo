@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="463.0" prefWidth="546.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Pet.SettingController">
+<AnchorPane prefHeight="463.0" prefWidth="546.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pet.SettingController">
     <children>
         <Button fx:id="addButton" layoutX="23.0" layoutY="94.0" mnemonicParsing="false" text="更改名字" />
         <ComboBox fx:id="petComboBox" layoutX="27.0" layoutY="30.0" prefWidth="150.0" promptText="Choose the pet" />

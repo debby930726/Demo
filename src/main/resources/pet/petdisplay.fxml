@@ -3,10 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="501.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Pet.DisplayController">
+<AnchorPane prefHeight="400.0" prefWidth="501.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pet.DisplayController">
     <children>
         <ComboBox fx:id="petComboBox" layoutX="27.0" layoutY="31.0" prefWidth="150.0" promptText="Choose the pet" />
-        <Button fx:id="settingButton" layoutX="27.0" layoutY="348.0" onAction="#openSetting1" text="Pet Setting" />
+        <Button fx:id="settingButton" layoutX="27.0" layoutY="348.0" onAction="#openSetting1" text="pet Setting" />
 
       <Button fx:id="settingButton2" layoutX="135.0" layoutY="348.0" mnemonicParsing="false" onAction="#openSetting2" text="Text Setting" />
       <Pane fx:id="imgpane" layoutX="27.0" layoutY="72.0" prefHeight="250.0" prefWidth="200.0" />

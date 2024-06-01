@@ -1,14 +1,14 @@
 package main;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -45,6 +45,17 @@ public class TimerController {
             timerStarted = true;
             startTimer();
         }
+    }
+
+    @FXML
+    private ColorPicker colorPicker;
+
+    @FXML
+    private Rectangle palette;
+
+    public void changeColor(ActionEvent event) {  // 新增選取顏色 < 待改 > 尚未儲存成資料！
+        Color mycolor = colorPicker.getValue();
+        palette.setFill(mycolor);
     }
 
     @FXML

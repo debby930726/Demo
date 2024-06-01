@@ -11,7 +11,7 @@ public class Timer extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Timer.class.getResource("timer.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1000, 800); // 固定 Scene 的大小為 500x300
+        Scene scene = new Scene(fxmlLoader.load(), 464, 800);
         stage.setScene(scene);
         stage.setTitle("Pomodoro Timer");
         stage.setResizable(false);

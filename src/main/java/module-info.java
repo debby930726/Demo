@@ -1,4 +1,4 @@
-module analysis {
+module demo {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -14,10 +14,15 @@ module analysis {
     requires java.prefs;
     requires javafx.swing;
 
-    opens analysis to javafx.fxml;
-    exports analysis;
-    opens main to javafx.fxml;
+
     exports main;
-    exports Pet;
-    opens Pet to javafx.fxml;
+    exports analysis;
+    exports setting;
+    exports pet;
+
+    opens main to javafx.fxml;
+    opens analysis to javafx.fxml;
+    opens setting to javafx.fxml;
+    opens pet to javafx.fxml;
+
 }
