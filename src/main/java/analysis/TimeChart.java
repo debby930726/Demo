@@ -42,7 +42,7 @@ public class TimeChart extends Application {  // 每日讀書時間圖表
 
         // Create the BarChart
         barChart = new BarChart<>(xAxis, yAxis);
-        barChart.setTitle("Daily Water Intake");
+        barChart.setTitle("Daily Study Time");
 
         // Load data from file
         loadDataFromFile();
@@ -69,7 +69,7 @@ public class TimeChart extends Application {  // 每日讀書時間圖表
 
     private void loadDataFromFile() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        try (Scanner scanner = new Scanner(new File("C:/Users/debby/OneDrive/桌面/MyFile/Code/JAVA/Demo/src/main/java/ntou/cs/java2024/demo/record.txt"))) {
+        try (Scanner scanner = new Scanner(new File("record.txt"))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] parts = line.split(" ");

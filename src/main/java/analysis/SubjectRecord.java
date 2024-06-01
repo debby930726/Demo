@@ -9,7 +9,7 @@ import java.util.Set;
 public class SubjectRecord {//存取subject資料
     private Map<String, Integer> subjectMap;
     private Map<String, Color> colorMap;
-    private final String filePath = "/main/resources/analysis/record/subrecord.txt";
+    private final String filePath = "C://Users/debby/OneDrive/桌面/MyFile/Code/JAVA/Demo/src/main/resources/analysis/record/subrecord.txt";
 
     public SubjectRecord() {
         subjectMap = new HashMap<>();

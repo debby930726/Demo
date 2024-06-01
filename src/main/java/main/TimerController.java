@@ -1,30 +1,19 @@
 package main;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
-import setting.SettingsController;
-
-import java.util.prefs.Preferences;
-import java.io.IOException;
-import java.io.File;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import analysis.TimeRecord;
+import analysis.SubjectRecord;
 
 public class TimerController {
 
@@ -34,91 +23,57 @@ public class TimerController {
     @FXML
     private ComboBox<String> timeComboBox;
 
+    @FXML
+    private ComboBox<String> subjectComboBox;
+
     private int workTimeSeconds = 25 * 60; // Default work time: 25 minutes
     private int breakTimeSeconds = 5 * 60; // Default break time: 5 minutes
     private int currentTimeSeconds = workTimeSeconds;
     private boolean isWorking = true;
-    private boolean isCounting = false;
-    private boolean autoStartPomodoros;
-    private boolean autoStartBreaks;
     private Timeline timeline;
-    private MusicManager workingMediaPlayer = new MusicManager();
-    private MusicManager ringPlayer = new MusicManager();
+    private boolean timerStarted = false;
+    private TimeRecord timeRecord = new TimeRecord();
+    private SubjectRecord subjectRecord = new SubjectRecord();
+    private int pomodoroCount = 1;
 
     @FXML
     private Label timerText;
 
     @FXML
-    private Label workingStatusLabel;
-
-    @FXML
-    private ColorPicker myColorPicker;
-
-    @FXML
-    private Rectangle rectanglePalette;
-
-    private Preferences preferences;
-
-    public TimerController() {
-        preferences = Preferences.userNodeForPackage(TimerController.class);
-        autoStartPomodoros = preferences.getBoolean("autoStartPomodoros", false);
-        autoStartBreaks = preferences.getBoolean("autoStartBreaks", false);
+    protected void start() {
+        if (!timerStarted) {
+            timerStarted = true;
+            startTimer();
+        }
     }
-
-    public void changeColor(ActionEvent event) {  // 選取顏色 < 待改 > 尚未儲存成資料！
-        Color mycolor = myColorPicker.getValue();
-        rectanglePalette.setFill(mycolor);
-    }
-
 
     @FXML
     private void updateTimeSettings() {
         String selectedTime = timeComboBox.getValue();
         if (selectedTime.equals("50 minutes")) {
             workTimeSeconds = 50 * 60;
-            currentTimeSeconds = workTimeSeconds;
+            pomodoroCount = 2;
         } else {
             workTimeSeconds = 25 * 60; // Default work time: 25 minutes
-            currentTimeSeconds = workTimeSeconds;
+            pomodoroCount = 1;
         }
+        currentTimeSeconds = workTimeSeconds;
         updateTimerLabel();
-    }
-
-    private void updateTimerLabel() {
-        int minutes = currentTimeSeconds / 60;
-        int remainingSeconds = currentTimeSeconds % 60;
-        timerText.setText(String.format("%02d:%02d", minutes, remainingSeconds));
     }
 
     @FXML
     private void startTimer() {
-        if (isCounting) {
-            return;
+        if (timeline != null) {
+            timeline.stop();
         }
-        else {
-            if (isWorking && workingMediaPlayer != null) {
-                workingMediaPlayer.play();
-            }
-            isCounting = true;
-        }
+
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            currentTimeSeconds-=5;
+            currentTimeSeconds--;
             if (currentTimeSeconds <= 0) {
                 switchTimer();
-                setWorkingStatusLabel();
-                if (isWorking && isCounting) {
-                    workingMediaPlayer.play();
-                } else {
-                    workingMediaPlayer.stop();
-                }
-                if (ringPlayer != null){
-                    ringPlayer.stop();
-                    ringPlayer.play();
-                }
             }
             updateTimerLabel();
         }));
-
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
@@ -126,90 +81,77 @@ public class TimerController {
     @FXML
     private void resetTimer() {
         if (timeline != null) {
-            isCounting = false;
             timeline.stop();
         }
         currentTimeSeconds = workTimeSeconds;
+        isWorking = true;
+        timerStarted = false;
         updateTimerLabel();
-        //startButton.setText("Start");
+        startButton.setText("Start");
     }
 
     private void switchTimer() {
+        timeline.stop();
+        timerStarted = false;
         if (isWorking) {
             currentTimeSeconds = breakTimeSeconds;
-            isWorking = false;
-            if (autoStartBreaks) {
-                startTimer();
-            } else {
-                resetTimer();
-            }
+            showAlert("Time to take a break! Please press start to begin the break.");
+
         } else {
             currentTimeSeconds = workTimeSeconds;
-            isWorking = true;
-            if (autoStartPomodoros) {
-                startTimer();
-            } else {
-                resetTimer();
+            showAlert("Break is over! Please select the work time and press start.");
+            timeRecord.recordPomodoro(pomodoroCount == 2); // 记录番茄钟
+            String selectedSubject = subjectComboBox.getValue();
+            if (selectedSubject != null && !selectedSubject.isEmpty()) {
+                subjectRecord.recordPomodoro(selectedSubject, pomodoroCount);
             }
+        }
+        isWorking = !isWorking;
+        updateTimerLabel();
+    }
+
+    private void showAlert(String message) { //跳alert出來
+        Platform.runLater(() -> {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Pomodoro Timer");
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
+
+    private void updateTimerLabel() { //更新時間
+        int minutes = currentTimeSeconds / 60;
+        int remainingSeconds = currentTimeSeconds % 60;
+        timerText.setText(String.format("%02d:%02d", minutes, remainingSeconds));
+    }
+    @FXML
+    private void addSubject() { //新增subject
+        String newSubject = subjectComboBox.getEditor().getText();
+        if (newSubject != null && !newSubject.isEmpty()) {
+            subjectComboBox.getItems().add(newSubject);
+            subjectComboBox.setValue(newSubject);
+            subjectRecord.recordPomodoro(newSubject, 0);
         }
     }
 
     @FXML
-    private void openSettings() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Settings-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("Settings");
-
-            SettingsController controller = fxmlLoader.getController();
-            controller.setTimerController(this);
-
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void removeSubject() { //移除subject
+        String selectedSubject = subjectComboBox.getValue();
+        if (selectedSubject != null && !selectedSubject.isEmpty()) {
+            subjectComboBox.getItems().remove(selectedSubject);
+            subjectComboBox.setValue(null); // Clear the selection
+            subjectRecord.removeSubject(selectedSubject); // Remove from subrecord.txt
         }
     }
 
-    public void setFontSize(int size) {
-        timerText.setFont(new Font(size));
-    }
-    //設定工作時間
-    public void setTimerSettings(int minutes) {
-        this.currentTimeSeconds = minutes * 60;
-        this.workTimeSeconds = minutes * 60;
-        updateTimerLabel();
-    }
-    //設定休息時間
-    public void setBreakSettings(int minutes) {
-        this.breakTimeSeconds = minutes * 60;
-        updateTimerLabel();
-    }
-    //設定是否自動開始工作計時
-    public void setAutoStartPomodoros(boolean autoStartPomodoros) {
-        this.autoStartPomodoros = autoStartPomodoros;
-        preferences.putBoolean("autoStartPomodoros", autoStartPomodoros);
-    }
-    //設定是否自動開始休息計時
-    public void setAutoStartBreaks(boolean autoStartBreaks) {
-        this.autoStartBreaks = autoStartBreaks;
-        preferences.putBoolean("autoStartBreaks", autoStartBreaks);
-    }
-    //設定是在工作還是休息的標籤
-    public void setWorkingStatusLabel() {
-        if (isWorking) {
-            workingStatusLabel.setText("Working");
-        } else {
-            workingStatusLabel.setText("Break");
-        }
-    }
+    @FXML
+    public void initialize() { //顯示給人選擇時間的combobox
+        timeComboBox.setItems(FXCollections.observableArrayList("25 minutes", "50 minutes"));
+        timeComboBox.setValue("25 minutes"); // Set default value
+        updateTimeSettings(); // Initialize timer settings based on default value
 
-    public MusicManager getWorkingMediaPlayer() {
-        return workingMediaPlayer;
-    }
-
-    public MusicManager getRingPlayer() {
-        return ringPlayer;
+        // Load subjects from SubjectRecord and add them to subjectComboBox
+        subjectComboBox.setItems(FXCollections.observableArrayList(subjectRecord.getSubjects()));
     }
 }

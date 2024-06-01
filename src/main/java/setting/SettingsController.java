@@ -1,4 +1,4 @@
-package setting;
+/*package setting;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -189,4 +189,4 @@ public class SettingsController {
             }
         }
     }
-}
+}*/

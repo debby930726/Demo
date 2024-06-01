@@ -12,9 +12,12 @@ module analysis {
     requires com.almasb.fxgl.all;
     requires javafx.media;
     requires java.prefs;
+    requires javafx.swing;
 
     opens analysis to javafx.fxml;
     exports analysis;
     opens main to javafx.fxml;
     exports main;
+    exports Pet;
+    opens Pet to javafx.fxml;
 }

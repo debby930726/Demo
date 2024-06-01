@@ -1,4 +1,5 @@
 JAVA: 6
-123: 4
 Test: 8
+FUCK: 0
 Math: 5
+--colors--

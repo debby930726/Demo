@@ -7,12 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TimeRecord {  //  存取Time資料
-    private static final String FILE_NAME = "/main/resources/analysis/record/record.txt";
+    private static final String FILE_NAME = "//main/resources/analysis/record/record.txt";
     private Map<LocalDate, Integer> recordMap = new HashMap<>();
 
-    public void recordPomodoro() {
+    public void recordPomodoro(boolean isLongPomodoro) {
         LocalDate today = LocalDate.now();
-        int pomodoroCount = recordMap.getOrDefault(today, 0) + 1;
+        int pomodoroCount = recordMap.getOrDefault(today, 0) + (isLongPomodoro ? 2 : 1);
+        recordMap.put(today, pomodoroCount);
 
         try {
             File file = new File(FILE_NAME);
