@@ -1,49 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<AnchorPane fx:id="mainStackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="mainStackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.MainController">
    <children>
-      <BorderPane layoutX="-188.0" layoutY="10.0" prefWidth="1069.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
-         <left>
-            <AnchorPane BorderPane.alignment="CENTER">
-               <children>
-                  <!--等setting-->
-                  <!--<Button fx:id="settingBTN" mnemonicParsing="false" onAction="#setting" text="Setting" />-->
-               </children>
-            </AnchorPane>
-         </left>
-         <top>
+      <AnchorPane>
+         <children>
             
-            <ImageView fitHeight="160.0" fitWidth="315.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                  <ImageView fitHeight="160.0" fitWidth="315.0" layoutX="438.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/horizontal-logo.png" />
                </image>
-               <BorderPane.margin>
-                  <Insets bottom="-40.0" left="-5.0" right="-5.0" />
-               </BorderPane.margin></ImageView>
-
-         </top>
-         <center>
-            <StackPane fx:id="podomoro" prefHeight="400.0" prefWidth="383.0" BorderPane.alignment="CENTER">
+            </ImageView>
+            <ToolBar layoutX="14.0" layoutY="14.0" prefHeight="90.0" prefWidth="184.0">
+              <items>
+                  <ImageView fx:id="SystemSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#SystemSettingClick" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/setting.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="PetSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#SystemSettingClick" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/pet.png" />
+                     </image>
+                  </ImageView>
+              </items>
+            </ToolBar>
+         </children>
+      </AnchorPane>
+      <HBox layoutX="362.0" layoutY="132.0" prefHeight="640.0" prefWidth="449.0">
+         <children>
+            <StackPane fx:id="timer" prefHeight="644.0" prefWidth="948.0">
                <children>
                   <fx:include source="../main/timer.fxml" />
                </children>
             </StackPane>
-         </center>
-         <right>
-            <StackPane fx:id="pet" prefHeight="400.0" prefWidth="383.0" BorderPane.alignment="CENTER">
+            <StackPane fx:id="pet" prefHeight="640.0" prefWidth="430.0">
                <children>
                   <fx:include source="../pet/petdisplay.fxml" />
                </children>
             </StackPane>
-         </right>
-      </BorderPane>
+         </children>
+      </HBox>
    </children>
    <padding>
       <Insets top="20.0" />
