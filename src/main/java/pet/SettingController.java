@@ -95,6 +95,8 @@ public class SettingController { // PetSetting的控制項
                 String name = getNameFromPetRecord(selectedPet); // 拿取寵物名字
                 rectangle.setFill(Color.web(color));
                 petNameTextField.setText(name); // 顯示名字
+
+                // 清空 drawingPane1 中的图片
                 List<Node> nodesToRemove = new ArrayList<>();
                 for (Node node : drawingPane1.getChildren()) {
                     if (node instanceof ImageView) {
@@ -103,10 +105,15 @@ public class SettingController { // PetSetting的控制項
                 }
                 drawingPane1.getChildren().removeAll(nodesToRemove); // 更新combobox時刪除所有圖片
 
+                // 清空 drawingPane2 中的图片
+                drawingPane2.getChildren().clear();
+
                 // 根據番茄鐘次數更新圖片
                 String petName = selectedPet.split(" ")[0];
                 int tomatoCount = getTomatoCountFromSubRecord(petName);
                 int imageCount = tomatoCount / 5;
+
+                // 重新加载图片到 drawingPane2 中
                 loadImagesIntoPane("src/main/resources/pet/decorateimg", imageCount);
             }
         });
