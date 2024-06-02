@@ -51,9 +51,7 @@ public class DisplayController {
     public void initialize() {
         handleComboBoxAction();
         Rectangle border1 = new Rectangle(imgpane.getPrefWidth(), imgpane.getPrefHeight());
-        border1.setFill(null);
-        border1.setStroke(Color.BLACK);
-        border1.setStrokeWidth(2);
+        border1.setFill(Color.web("white"));
 
         imgpane.getChildren().add(border1);
     }
@@ -89,8 +87,8 @@ public class DisplayController {
                     if (imageFile.exists()) {
                         Image image = new Image(imageFile.toURI().toString());
                         ImageView imageView = new ImageView(image);
-                        imageView.setFitWidth(200);
-                        imageView.setFitHeight(250);
+                        imageView.setFitWidth(imgpane.getPrefWidth()); // 符合Pane大小
+                        imageView.setFitHeight(imgpane.getPrefHeight());
                         imageView.setOnMouseClicked(event1 -> handleImageClick()); // 將點擊事件綁定到 handleImageClick 方法
                         petName = imageName;
                         imgpane.getChildren().clear();
@@ -114,14 +112,9 @@ public class DisplayController {
 
     @FXML
     private void handleImageClick() {
-        // 獲取當前時間
-        LocalDateTime currentTime = LocalDateTime.now();
-        // 格式化時間
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
-        String formattedTime = currentTime.format(formatter);
-
+        // 刪除時間->左手邊就有時間了
         // 設置 Label 的文本為當前時間和圖片名字
-        String labelText = "現在是 " + formattedTime + "\n我是寵物" + petName + "\n我想跟你說";
+        String labelText =  petName + "：";
 
         // 從 textrecord.txt 中讀取一句話
         String randomSentence = getRandomSentence();
