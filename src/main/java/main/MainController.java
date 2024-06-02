@@ -35,6 +35,7 @@ public class MainController {  // 跑主畫面 >> 維修中！
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/timer.fxml"));
             Node TimerView = loader.load();
             mainStackPane.getChildren().add(TimerView);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,8 +1,9 @@
 package pet;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -10,6 +11,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.image.*;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import javafx.scene.input.MouseEvent;
@@ -22,6 +25,8 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import javafx.scene.SnapshotParameters;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
+
 
 public class SettingController { // PetSetting的控制項
 
@@ -32,7 +37,7 @@ public class SettingController { // PetSetting的控制項
     private ComboBox<String> petComboBox;
 
     @FXML
-    private Button addButton;
+    private Label TomatoCount;
 
     @FXML
     private TextField petNameTextField;
@@ -48,12 +53,15 @@ public class SettingController { // PetSetting的控制項
     private List<String> pets;
 
     @FXML
+    private ColorPicker colorPicker;
+
+    @FXML
     public void initialize() {
         // 初始化下拉式選單
         handleComboBoxAction();
 
         rectangle = new Rectangle(80, 100);
-        rectangle.setFill(Color.web("#000000"));
+        rectangle.setFill(Color.web("white"));
 
         // 計算Pane的中心位置
         double centerX = (drawingPane1.getWidth() - rectangle.getWidth()) / 2;
@@ -66,27 +74,27 @@ public class SettingController { // PetSetting的控制項
         drawingPane1.getChildren().add(rectangle);
 
         Rectangle border1 = new Rectangle(drawingPane1.getPrefWidth(), drawingPane1.getPrefHeight());
-        border1.setFill(null);
-        border1.setStroke(Color.BLACK);
-        border1.setStrokeWidth(2);
+        border1.setFill(Color.web("white"));
 
         Rectangle border2 = new Rectangle(drawingPane2.getPrefWidth(), drawingPane2.getPrefHeight());
-        border2.setFill(null);
-        border2.setStroke(Color.BLACK);
-        border2.setStrokeWidth(2);
+        border2.setFill(Color.web("#e8e8e8"));
 
         drawingPane1.getChildren().add(border1);
+        rectangle.toFront();
         drawingPane2.getChildren().add(border2);
 
+
         // 綁定添加按鈕的事件處理
-        addButton.setOnAction(event -> handleAddButtonAction());
+        //addButton.setOnAction(event -> handleAddButtonAction());
 
         // 當 ComboBox 的值改變時，更新長方形的顏色和圖片數量
         petComboBox.setOnAction(event -> {
             String selectedPet = petComboBox.getValue();
             if (selectedPet != null) {
                 String color = getColorFromPetRecord(selectedPet);
+                String name = getNameFromPetRecord(selectedPet); // 拿取寵物名字
                 rectangle.setFill(Color.web(color));
+                petNameTextField.setText(name); // 顯示名字
                 List<Node> nodesToRemove = new ArrayList<>();
                 for (Node node : drawingPane1.getChildren()) {
                     if (node instanceof ImageView) {
@@ -123,7 +131,7 @@ public class SettingController { // PetSetting的控制項
         String selectedPet = petComboBox.getValue();
         String newName = petNameTextField.getText().trim();
 
-        if (selectedPet != null && !newName.isEmpty()) {
+        if (selectedPet != null && !Objects.equals(newName, getNameFromPetRecord(selectedPet))) {
             try {
                 updatePetName("src/main/resources/pet/records/petrecord.txt", selectedPet, newName);
                 handleComboBoxAction(); // 更新 ComboBox
@@ -136,6 +144,8 @@ public class SettingController { // PetSetting的控制項
 
     @FXML
     private void handleSaveButtonAction() {
+        handleAddButtonAction();  // 更新名字綁在儲存資料內
+
         WritableImage image = drawingPane1.snapshot(new SnapshotParameters(), null);
 
         // 將WritableImage轉換為BufferedImage
@@ -143,7 +153,7 @@ public class SettingController { // PetSetting的控制項
         String selectedPetName = petComboBox.getValue();
         selectedPetName = selectedPetName.replaceAll("[()]", "");
         String[] name = selectedPetName.split(" ");
-        String fileName = name[1] + ".png";
+        String fileName = name[1] + ".png";  // 如果換名字檔案是不是會一直出現
         // 儲存圖片
         File file = new File("src/main/resources/pet/records/" + fileName);
         try {
@@ -216,6 +226,29 @@ public class SettingController { // PetSetting的控制項
         return color;
     }
 
+    public String getNameFromPetRecord(String selectedPet) { // 拿寵物名字
+        String petName = ""; // 默認為空字符串
+        String[] name = selectedPet.split(" ");
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/records/petrecord.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(" ");
+                if (parts.length >= 3) {
+                    String petNameFromRecord = parts[1].trim(); // 第二個以空格隔開的項目是寵物名字
+                    if (petNameFromRecord.equals(name[1])) { // 比對使用者輸入
+                        petName = petNameFromRecord;
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 處理 IO 錯誤
+        }
+        return petName;
+    }
+
+
     private void enableDragAndDrop(Node node) {
         final Delta dragDelta = new Delta();
 
@@ -282,8 +315,8 @@ public class SettingController { // PetSetting的控制項
             File[] files = directory.listFiles((dir, name) -> name.endsWith(".png"));
             if (files != null) {
                 int imageCount = 0;
-                double x = 0;
-                double y = 0;
+                double x = 5;
+                double y = 5;
                 for (File file : files) {
                     if (imageCount >= imageCountToShow) {
                         break;
@@ -301,7 +334,7 @@ public class SettingController { // PetSetting的控制項
                     imageCount++;
                     if (imageCount % 3 == 0) {
                         x = 0;
-                        y += 80;
+                        y += 83;
                     } else {
                         x += 80;
                     }
@@ -336,7 +369,7 @@ public class SettingController { // PetSetting的控制項
         });
     }
 
-    private int getTomatoCountFromSubRecord(String petName) { //獲取執行幾次番茄鐘
+    private int getTomatoCountFromSubRecord(String petName) { //  獲取執行幾次番茄鐘
         int tomatoCount = 0;
         try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/analysis/record/subrecord.txt"))) {
             String line;
@@ -345,6 +378,7 @@ public class SettingController { // PetSetting的控制項
                 if (parts.length >= 2 && parts[0].trim().equals(petName)) {
                     tomatoCount = Integer.parseInt(parts[1].trim());
                     System.out.println(tomatoCount);
+                    TomatoCount.setText("目前累計："+tomatoCount);  // 於螢幕上顯示現在的番茄鐘次數
                     break;
                 }
             }

@@ -43,6 +43,8 @@ public class SplashController {
             Scene mainScene = new Scene(mainPane);
             primaryStage.setScene(mainScene);
             primaryStage.setResizable(true);
+            // 加載CSS
+            mainScene.getStylesheets().add(getClass().getResource("/main/style/main.css").toExternalForm());
         } catch (IOException e) {
             e.printStackTrace();
         }

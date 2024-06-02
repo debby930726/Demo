@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="522.0" prefWidth="247.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pet.DisplayController">
+<AnchorPane prefHeight="527.0" prefWidth="377.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pet.DisplayController">
     <children>
-        <ComboBox fx:id="petComboBox" layoutX="27.0" layoutY="31.0" prefWidth="150.0" promptText="Choose the pet" />
-        <Button fx:id="settingButton" layoutX="27.0" layoutY="458.0" onAction="#openSetting1" prefHeight="23.0" prefWidth="90.0" text="pet Setting" />
-
-        <Button fx:id="settingButton2" layoutX="132.0" layoutY="458.0" mnemonicParsing="false" onAction="#openSetting2" prefHeight="23.0" prefWidth="90.0" text="Text Setting" />
-        <Pane fx:id="imgpane" layoutX="27.0" layoutY="72.0" prefHeight="250.0" prefWidth="200.0">
+        <ComboBox fx:id="petComboBox" layoutX="114.0" layoutY="36.0" prefWidth="150.0" promptText="Choose the pet" />
+        <Button fx:id="settingButton" layoutX="35.0" layoutY="444.0" onAction="#openSetting1" prefHeight="23.0" prefWidth="90.0" text="Pet Setting" />
+        <!-- settingBtn 是 Pet Setting / settingBTN2 是 Text Setting-->
+        <Button fx:id="settingButton2" layoutX="140.0" layoutY="444.0" mnemonicParsing="false" onAction="#openSetting2" prefHeight="23.0" prefWidth="90.0" text="Text Setting" />
+        <Pane fx:id="imgpane" layoutX="89.0" layoutY="79.0" prefHeight="250.0" prefWidth="200.0">
         </Pane>
-        <Label fx:id="infoLabel" layoutX="30.0" layoutY="349.0" prefHeight="97.0" prefWidth="192.0">
+        <Label fx:id="infoLabel" layoutX="93.0" layoutY="336.0" prefHeight="97.0" prefWidth="192.0">
         <font>
             <Font size="14.0" />
         </font>
         </Label>
-      <Button fx:id="updateButton" layoutX="27.0" layoutY="485.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="90.0" text="寵物資料同步" onAction="#handleUpdateButtonAction"/>
+      <Button fx:id="updateButton" layoutX="244.0" layoutY="444.0" mnemonicParsing="false" onAction="#handleUpdateButtonAction" prefHeight="23.0" prefWidth="90.0" text="寵物資料同步" />
     </children>
 </AnchorPane>

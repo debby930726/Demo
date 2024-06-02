@@ -13,7 +13,7 @@ public class Timer extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Timer.class.getResource("timer.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 464, 800);
         stage.setScene(scene);
-        stage.setTitle("Pomodoro Timer");
+        stage.setTitle("Test for Pomodoro");
         stage.setResizable(false);
         stage.show();
     }

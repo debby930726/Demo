@@ -7,8 +7,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -21,13 +25,19 @@ public class TimerController {
     private Button startButton;
 
     @FXML
+    private Label statusLabel;
+
+    @FXML
     private ComboBox<String> timeComboBox;
 
     @FXML
     private ComboBox<String> subjectComboBox;
+    private int test = 3;
+    private int workTimeMinutes = test; // 另設變數儲存工作時間(原25)
+    private int breakTimeMinutes  = 5;
+    private int workTimeSeconds = workTimeMinutes * 60;
+    private int breakTimeSeconds = breakTimeMinutes * 60;
 
-    private int workTimeSeconds = 25 * 60; // Default work time: 25 minutes
-    private int breakTimeSeconds = 5 * 60; // Default break time: 5 minutes
     private int currentTimeSeconds = workTimeSeconds;
     private boolean isWorking = true;
     private Timeline timeline;
@@ -39,6 +49,8 @@ public class TimerController {
     @FXML
     private Label timerText;
 
+    @FXML
+    private Arc timerArc;
 
     @FXML
     private ColorPicker colorPicker;
@@ -55,9 +67,10 @@ public class TimerController {
     }
 
     @FXML
-    public void changeColor(ActionEvent event) {
+    private void changeColor(ActionEvent event) {
         Color mycolor = colorPicker.getValue();
         palette.setFill(mycolor);
+        timerArc.setStroke(mycolor);
 
         String selectedSubject = subjectComboBox.getValue();
         if (selectedSubject != null && !selectedSubject.isEmpty()) {
@@ -70,18 +83,21 @@ public class TimerController {
     private void updateTimeSettings() {
         String selectedTime = timeComboBox.getValue();
         if (selectedTime.equals("50 minutes")) {
-            workTimeSeconds = 50 * 60;
+            workTimeMinutes = 1;
             pomodoroCount = 2;
         } else {
-            workTimeSeconds = 25 * 60; // Default work time: 25 minutes
+            workTimeMinutes = 25;
             pomodoroCount = 1;
         }
+        workTimeSeconds = workTimeMinutes * 60;
+        breakTimeSeconds = breakTimeMinutes * 60;
         currentTimeSeconds = workTimeSeconds;
         updateTimerLabel();
     }
 
     @FXML
     private void startTimer() {
+
         if (timeline != null) {
             timeline.stop();
         }
@@ -91,12 +107,20 @@ public class TimerController {
             return;
         }
 
+        if( currentTimeSeconds == workTimeSeconds) { // 顯示狀態
+            statusLabel.setText("- Working -");
+        }else{
+            statusLabel.setText("- Break -");
+        }
+
+
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             currentTimeSeconds--;
             if (currentTimeSeconds <= 0) {
                 switchTimer();
             }
             updateTimerLabel();
+            updateTimerArc();
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
@@ -112,10 +136,11 @@ public class TimerController {
         timerStarted = false;
         updateTimerLabel();
         startButton.setText("Start");
+        updateTimerArc();
     }
 
     @FXML
-    private void addSubject() { //新增subject
+    private void addSubject() { //  新增subject
         String newSubject = subjectComboBox.getEditor().getText();
         if (newSubject != null && !newSubject.isEmpty()) {
             subjectComboBox.getItems().add(newSubject);
@@ -136,6 +161,11 @@ public class TimerController {
 
     @FXML
     public void initialize() { //顯示給人選擇時間的combobox
+        // 初始化背景圓圈動畫
+        timerArc.setType(ArcType.OPEN);
+        updateTimerArc();
+        statusLabel.setText("");
+
         timeComboBox.setItems(FXCollections.observableArrayList("25 minutes", "50 minutes"));
         timeComboBox.setValue("25 minutes"); // Set default value
         updateTimeSettings(); // Initialize timer settings based on default value
@@ -148,6 +178,7 @@ public class TimerController {
                 if (color != null) {
                     colorPicker.setValue(color);
                     palette.setFill(color);
+                    timerArc.setStroke(color);
                 }
             }
         });
@@ -159,12 +190,14 @@ public class TimerController {
         if (isWorking) {
             currentTimeSeconds = breakTimeSeconds;
             showAlert("Time to take a break! Please press start to begin the break.");
+            statusLabel.setText("- Break -"); // 切換狀態
 
         } else {
             currentTimeSeconds = workTimeSeconds;
             showAlert("Break is over! Please select the work time and press start.");
             timeRecord.recordPomodoro(pomodoroCount == 2); // 记录番茄钟
             String selectedSubject = subjectComboBox.getValue();
+            statusLabel.setText("- Working -"); // 切換狀態
             if (selectedSubject != null && !selectedSubject.isEmpty()) {
                 subjectRecord.recordPomodoro(selectedSubject, pomodoroCount);
             }
@@ -173,12 +206,16 @@ public class TimerController {
         updateTimerLabel();
     }
 
-    private void showAlert(String message) { //跳alert出來
+    private void showAlert(String message) { //  跳alert出來
         Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Pomodoro Timer");
+            alert.setTitle("Pomodoro Alert");
             alert.setHeaderText(null);
             alert.setContentText(message);
+
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/main/images/icon.png")));
+
             alert.showAndWait();
         });
     }
@@ -187,6 +224,19 @@ public class TimerController {
         int minutes = currentTimeSeconds / 60;
         int remainingSeconds = currentTimeSeconds % 60;
         timerText.setText(String.format("%02d:%02d", minutes, remainingSeconds));
+    }
+
+    private void updateTimerArc() {
+        double startAngle = 90; // 12點方向
+        double totalAngle = 360; // 扇形總角度，順時針為正
+        double angle = (double) currentTimeSeconds / (isWorking ? workTimeSeconds : breakTimeSeconds) * totalAngle;
+
+        // 設置扇形的起始角度和角度長度
+        timerArc.setStartAngle(startAngle);
+        timerArc.setLength(angle);
+
+        // 確保扇形動畫的平滑度
+        timerArc.setCache(true);
     }
 
 
