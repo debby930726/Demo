@@ -18,6 +18,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import analysis.TimeRecord;
 import analysis.SubjectRecord;
+import setting.Settings;
 
 public class TimerController {
 
@@ -45,6 +46,9 @@ public class TimerController {
     private TimeRecord timeRecord = new TimeRecord();
     private SubjectRecord subjectRecord = new SubjectRecord();
     private int pomodoroCount = 1;
+
+    MusicManager musicManager = MusicManager.getInstance();
+    private Settings settings;
 
     @FXML
     private Label timerText;
@@ -113,6 +117,9 @@ public class TimerController {
             statusLabel.setText("- Break -");
         }
 
+        if(isWorking){//工作狀態時播放
+            musicManager.playSound();
+        }
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             currentTimeSeconds--;
@@ -131,6 +138,8 @@ public class TimerController {
         if (timeline != null) {
             timeline.stop();
         }
+        musicManager.stopSound();//停止所有聲音
+        musicManager.stopRing();
         currentTimeSeconds = workTimeSeconds;
         isWorking = true;
         timerStarted = false;
@@ -186,6 +195,8 @@ public class TimerController {
 
     private void switchTimer() {
         timeline.stop();
+        musicManager.stopSound();//停止音樂
+        musicManager.playRing();//撥放鈴聲
         timerStarted = false;
         if (isWorking) {
             currentTimeSeconds = breakTimeSeconds;
