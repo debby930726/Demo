@@ -34,13 +34,6 @@ public class MusicManager {
             soundPlayer = null;
         } else {
             Media media = new Media(new File("src/main/resources/setting/sounds/" + selectedSound).toURI().toString());
-            Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("sound");
-                alert.setHeaderText(null);
-                alert.setContentText("src/main/resources/setting/sounds/" + selectedSound);
-                alert.showAndWait();
-            });
             soundPlayer = new MediaPlayer(media);
             soundPlayer.setVolume(preferences.getDouble("soundVolume", 0.5));
             soundPlayer.setOnEndOfMedia(() -> soundPlayer.seek(Duration.ZERO));
@@ -54,13 +47,6 @@ public class MusicManager {
             ringPlayer = null;
         } else {
             Media media = new Media(new File("src/main/resources/setting/rings/" + selectedSound).toURI().toString());
-            Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("sound");
-                alert.setHeaderText(null);
-                alert.setContentText("src/main/resources/setting/sounds/" + selectedSound);
-                alert.showAndWait();
-            });
             ringPlayer = new MediaPlayer(media);
             ringPlayer.setVolume(preferences.getDouble("ringVolume", 0.5));
         }
