@@ -1,55 +1,86 @@
 package analysis;
 
-import javafx.scene.chart.LineChart;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
-public class SubjectChart {
+public class SubjectChart extends Application {
+    private Map<String, Integer> subjectMap;
+    private Map<String, String> colorMap;
 
-    public StackPane createChart() {
-        final NumberAxis xAxis = new NumberAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Number of Month");
-        final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-
-        lineChart.setTitle("Subject Monitoring");
-
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName("My Subject Data");
-
-        // 加載數據並添加到系列
-        loadSubjectData(series);
-
-        lineChart.getData().add(series);
-
-        StackPane stackPane = new StackPane(lineChart);
-        stackPane.setTranslateX(400);  // 調整圖表的水平位置
-        stackPane.setTranslateY(300);  // 調整圖表的垂直位置
-
-
-        return stackPane;
+    public static void main(String[] args) {
+        launch(args);
     }
 
-    private void loadSubjectData(XYChart.Series<Number, Number> series) {
-        // 加載文件
-        InputStream inputStream = getClass().getResourceAsStream("/src/main/resources/analysis/record/subrecord.txt");
-        if (inputStream == null) {
-            System.err.println("Could not find file subRecord.txt");
-            return;
+    @Override
+    public void start(Stage stage) {
+        stage.setTitle("Subject Pomodoro Chart");
+
+        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel("Subjects");
+        yAxis.setLabel("Pomodoros(25min)");
+
+        final BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+        barChart.setTitle("Pomodoro Counts per Subject");
+
+        loadSubjectData();
+        ////長條圖設定
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        for (Map.Entry<String, Integer> entry : subjectMap.entrySet()) {
+            XYChart.Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue());
+            String color = colorMap.get(entry.getKey());
+
+            data.nodeProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    newValue.setStyle("-fx-bar-fill: " + color + ";");
+                }
+            });
+
+            series.getData().add(data);
         }
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        barChart.getData().add(series);
+
+        Scene scene = new Scene(barChart, 800, 600);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void loadSubjectData() { //從subrecord.txt讀取科目資料
+        subjectMap = new HashMap<>();
+        colorMap = new HashMap<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/analysis/record/subrecord.txt"))) {
             String line;
-            int month = 1;
+            boolean colorsSection = false;
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                series.getData().add(new XYChart.Data<>(month++, Double.parseDouble(data[1])));
+                if (line.trim().equals("--colors--")) {
+                    colorsSection = true;
+                    continue;
+                }
+            ////// 處理資料格式
+                String[] parts = line.split(":");
+                if (parts.length == 2) {
+                    if (!colorsSection) {
+                        String subject = parts[0].trim();
+                        int count = Integer.parseInt(parts[1].trim());
+                        subjectMap.put(subject, count);
+                    } else {
+                        String subject = parts[0].trim();
+                        String color = parts[1].trim();
+                        colorMap.put(subject, color);
+                    }
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
