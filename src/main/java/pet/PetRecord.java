@@ -5,13 +5,13 @@ import java.io.*;
 public class PetRecord {
     public static void main(String[] args) {
         try {
-            // 開啟 subrecord.txt 檔案
+            // 開啟 subrecord.txt 檔案，使用 UTF-8 編碼
             File inputFile = new File("src/main/resources/analysis/record/subrecord.txt");
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
 
-            // 建立 petrecord.txt 檔案
+            // 建立 petrecord.txt 檔案，使用 UTF-8 編碼
             File outputFile = new File("src/main/resources/pet/records/petrecord.txt");
-            FileWriter writer = new FileWriter(outputFile, true); // 使用 true 表示附加到現有檔案
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, true), "UTF-8")); // 使用 true 表示附加到現有檔案
 
             // 讀取檔案內容
             String line;
@@ -55,7 +55,7 @@ public class PetRecord {
 
     // 檢查名稱是否已存在 petrecord.txt 中
     private static boolean checkNameExists(File file, String name) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
         String line;
         while ((line = reader.readLine()) != null) {
             if (line.startsWith(name)) {
@@ -69,7 +69,7 @@ public class PetRecord {
 
     // 更新 petrecord.txt 中指定名稱的顏色
     private static void updateColor(File file, String name, String newColor) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
         StringBuilder content = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
@@ -84,7 +84,7 @@ public class PetRecord {
         reader.close();
 
         // 覆寫檔案內容
-        FileWriter writer = new FileWriter(file);
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
         writer.write(content.toString());
         writer.close();
     }
