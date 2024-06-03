@@ -19,6 +19,8 @@ import javafx.collections.FXCollections;
 import analysis.TimeRecord;
 import analysis.SubjectRecord;
 import setting.Settings;
+import javafx.scene.control.Alert;
+
 
 public class TimerController {
 
@@ -149,12 +151,24 @@ public class TimerController {
     }
 
     @FXML
-    private void addSubject() { //  新增subject
+    private void addSubject() { // 新增subject
         String newSubject = subjectComboBox.getEditor().getText();
         if (newSubject != null && !newSubject.isEmpty()) {
-            subjectComboBox.getItems().add(newSubject);
-            subjectComboBox.setValue(newSubject);
-            subjectRecord.recordPomodoro(newSubject, 0);
+            // 檢查 newSubject 是否已經在 ComboBox 中
+            boolean exists = subjectComboBox.getItems().stream()
+                    .anyMatch(item -> item.equals(newSubject));
+            if (!exists) {
+                subjectComboBox.getItems().add(newSubject);
+                subjectComboBox.setValue(newSubject);
+                subjectRecord.recordPomodoro(newSubject, 0);
+            } else {
+                // 跳出提示框提醒使用者該項目已經存在
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("重複的項目");
+                alert.setHeaderText(null);
+                alert.setContentText("該科目已經創建過。");
+                alert.showAndWait();
+            }
         }
     }
 
