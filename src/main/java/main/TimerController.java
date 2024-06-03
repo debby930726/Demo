@@ -119,12 +119,11 @@ public class TimerController {
             statusLabel.setText("- Break -");
         }
 
-        if(isWorking){//工作狀態時播放
-            musicManager.playSound();
-        }
-
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             currentTimeSeconds--;
+            if(isWorking && !musicManager.soundIsPlaying()){//工作狀態時播放
+                musicManager.playSound();
+            }
             if (currentTimeSeconds <= 0) {
                 switchTimer();
             }

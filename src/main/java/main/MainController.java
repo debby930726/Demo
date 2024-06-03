@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import pet.PetSetting;
+import setting.Settings;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -28,6 +29,7 @@ public class MainController {  // 跑主畫面 >> 維修中！
     private ImageView SystemSettingBTN;
 
     private PetSetting petSetting;
+    private Settings settings;
 
     public void initialize() {  //  初始化
 
@@ -41,6 +43,22 @@ public class MainController {  // 跑主畫面 >> 維修中！
                 Stage stage = new Stage();
                 petSetting.start(stage);
                 stage.setOnHidden(e -> petSetting = null); // 當視窗關閉時設置petSetting為null
+            } catch (Exception e) {
+                e.printStackTrace();
+                // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式
+            }
+        } else {
+            System.out.println("已開啟視窗");
+        }
+    }
+    @FXML
+    private void MusicSettingClick(javafx.scene.input.MouseEvent event) {
+        if (settings == null) {
+            settings = new Settings();
+            try {
+                Stage stage = new Stage();
+                settings.start(stage);
+                stage.setOnHidden(e -> settings = null); // 當視窗關閉時設置petSetting為null
             } catch (Exception e) {
                 e.printStackTrace();
                 // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式

@@ -20,7 +20,7 @@
             </ImageView>
             <ToolBar layoutX="14.0" layoutY="14.0" prefHeight="90.0" prefWidth="184.0">
               <items>
-                  <ImageView fx:id="SystemSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#SystemSettingClick" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="SystemSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#MusicSettingClick" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/setting.png" />
                      </image>
