@@ -12,7 +12,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.image.*;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import java.awt.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import javafx.scene.input.MouseEvent;
@@ -28,7 +28,7 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 
-public class SettingController { // PetSetting的控制項
+public class PetSettingController { // PetSetting的控制項
 
     @FXML
     private AnchorPane anchorPane;
@@ -77,7 +77,7 @@ public class SettingController { // PetSetting的控制項
         border1.setFill(Color.web("white"));
 
         Rectangle border2 = new Rectangle(drawingPane2.getPrefWidth(), drawingPane2.getPrefHeight());
-        border2.setFill(Color.web("#e8e8e8"));
+        border2.setFill(Color.web("#D8D7D2"));
 
         drawingPane1.getChildren().add(border1);
         rectangle.toFront();
@@ -107,6 +107,7 @@ public class SettingController { // PetSetting的控制項
 
                 // 清空 drawingPane2 中的图片
                 drawingPane2.getChildren().clear();
+                drawingPane2.getChildren().add(border2);
 
                 // 根據番茄鐘次數更新圖片
                 String petName = selectedPet.split(" ")[0];
