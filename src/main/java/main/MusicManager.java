@@ -5,6 +5,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import setting.SettingsController;
+
 import java.io.File;
 import java.util.prefs.Preferences;
 
@@ -13,8 +15,11 @@ public class MusicManager {
     private MediaPlayer soundPlayer;
     private MediaPlayer ringPlayer;
     private Preferences preferences;
+    private boolean soundIsPlaying = false;
     public MusicManager() {
-        preferences = Preferences.userNodeForPackage(MusicManager.class);
+        preferences = Preferences.userNodeForPackage(SettingsController.class);
+        setSound(preferences.get("workingSound", "None"));
+        setRing(preferences.get("ring", "None"));
     }
     public static MusicManager getInstance() {
         if (instance == null) {
@@ -32,6 +37,7 @@ public class MusicManager {
         }
         if (selectedSound.equals("None")) {
             soundPlayer = null;
+            soundIsPlaying = false;
         } else {
             Media media = new Media(new File("src/main/resources/setting/sounds/" + selectedSound).toURI().toString());
             soundPlayer = new MediaPlayer(media);
@@ -66,6 +72,7 @@ public class MusicManager {
     public void playSound() {
         if (soundPlayer != null) {
             soundPlayer.play();
+            soundIsPlaying = true;
         }
     }
     public void playRing() {
@@ -81,7 +88,11 @@ public class MusicManager {
     public void stopRing() {
         if (ringPlayer != null) {
             ringPlayer.stop();
+            soundIsPlaying = false;
         }
+    }
+    public boolean soundIsPlaying() {
+        return soundIsPlaying;
     }
 }
 

@@ -36,7 +36,7 @@
             </ImageView>
             <ToolBar layoutX="14.0" layoutY="14.0" orientation="VERTICAL" prefHeight="262.0" prefWidth="85.0" scaleShape="false" style="-fx-background-color: #EFEEE9;">
               <items>
-                  <ImageView fx:id="SystemSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#SystemSettingClick" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="SystemSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#MusicSettingClick" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@images/setting.png" />
                      </image>
