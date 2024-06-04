@@ -5,33 +5,28 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-
-import java.io.BufferedReader;
+import javafx.scene.chart.XYChart;import avafx.scene.image.Image;
+import javafx.stage.Stage;import ava.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class SubjectChart extends Application {
-    private Map<String, Integer> subjectMap;
+public class SubjectC    priate Map<String, Integer> subjectMap;
     private Map<String, String> colorMap;
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    @Override
-    public void start(Stage stage) {
-        stage.setTitle("AnalysisChart");
-        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/main/images/analysis.png"))));
+        public void start(Stage stage) {
+            stage.setTitle("AnalysisChart");       
+        stage.getIcons(
 
-        final CategoryAxis xAxis = new CategoryAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Subjects");
+            final CategoryAxis xAxis = new Categ
+            final NumberA
+            xAxis.setLabel("Subjects");
         yAxis.setLabel("Pomodoros(25min)");
 
         final BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
