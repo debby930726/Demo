@@ -13,7 +13,6 @@ public class MainController {  // 跑主畫面
     private PetSetting petSetting;
     private Settings settings;
 
-    private Settings settings;
 
     private SubjectChart subjectChart;
 
