@@ -60,8 +60,8 @@ public class DisplayController {
     private void handleUpdateButtonAction() {
         // 在按下 updateButton 時啟用 PetRecord
         try {
-            ProcessBuilder pb = new ProcessBuilder("java", "-classpath", "path/to/your/classes", "pet.PetRecord");
-            pb.directory(new File("src/main/resources/analysis/record")); // 設置工作目錄
+            // 設置 Java 程序的執行命令，確保 classpath 指向包含 PetRecord.class 的目錄
+            ProcessBuilder pb = new ProcessBuilder("java", "-cp", "target/classes", "pet.PetRecord");
             pb.redirectOutput(new File("update.log")); // 將輸出重定向到日誌檔案
             Process process = pb.start();
             process.waitFor(); // 等待過程完成
