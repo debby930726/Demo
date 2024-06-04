@@ -6,6 +6,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -13,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SubjectChart extends Application {
     private Map<String, Integer> subjectMap;
@@ -24,7 +26,8 @@ public class SubjectChart extends Application {
 
     @Override
     public void start(Stage stage) {
-        stage.setTitle("Subject Pomodoro Chart");
+        stage.setTitle("AnalysisChart");
+        stage.getIcons().add(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/main/images/analysis.png"))));
 
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();

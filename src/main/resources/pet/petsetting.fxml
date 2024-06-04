@@ -8,12 +8,12 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="503.0" prefWidth="546.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pet.SettingController">
+<AnchorPane prefHeight="503.0" prefWidth="546.0" style="-fx-background-color: #EFEEE9;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pet.PetSettingController">
     <children>
         <!--<Button layoutX="334.0" layoutY="41.0" mnemonicParsing="false" text="更改名字" />-->
         <ComboBox fx:id="petComboBox" layoutX="29.0" layoutY="41.0" prefWidth="150.0" promptText="Choose the pet" />
         <TextField fx:id="petNameTextField" layoutX="280.0" layoutY="41.0" prefHeight="23.0" prefWidth="127.0" promptText="Pet's Name" />
-        <Pane fx:id="drawingPane1" layoutX="29.0" layoutY="130.0" prefHeight="229.0" prefWidth="213.0">
+        <Pane fx:id="drawingPane1" layoutX="29.0" layoutY="130.0" prefHeight="229.0" prefWidth="213.0" >
         </Pane>
         <Pane fx:id="drawingPane2" layoutX="269.0" layoutY="130.0" prefHeight="331.0" prefWidth="255.0" />
       <Button fx:id="saveButton" layoutX="421.0" layoutY="41.0" mnemonicParsing="false" onAction="#handleSaveButtonAction" text="更新寵物" />

@@ -1,53 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="mainStackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.MainController">
+<AnchorPane fx:id="mainStackPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1034.0" style="-fx-background-color: #EFEEE9;" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.MainController">
    <children>
-      <AnchorPane>
+      <HBox layoutX="145.0" layoutY="101.0" prefHeight="640.0" prefWidth="449.0">
          <children>
-            
-                  <ImageView fitHeight="160.0" fitWidth="315.0" layoutX="438.0" layoutY="6.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/horizontal-logo.png" />
-               </image>
-            </ImageView>
-            <ToolBar layoutX="14.0" layoutY="14.0" prefHeight="90.0" prefWidth="184.0">
-              <items>
-                  <ImageView fx:id="SystemSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#MusicSettingClick" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/setting.png" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="PetSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#SystemSettingClick" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/pet.png" />
-                     </image>
-                  </ImageView>
-              </items>
-            </ToolBar>
-         </children>
-      </AnchorPane>
-      <HBox layoutX="362.0" layoutY="132.0" prefHeight="640.0" prefWidth="449.0">
-         <children>
-            <StackPane fx:id="timer" prefHeight="644.0" prefWidth="948.0">
+            <StackPane fx:id="timer" prefHeight="640.0" prefWidth="620.0">
                <children>
                   <fx:include source="../main/timer.fxml" />
                </children>
             </StackPane>
-            <StackPane fx:id="pet" prefHeight="640.0" prefWidth="430.0">
+            <StackPane fx:id="pet" prefHeight="640.0" prefWidth="400.0">
                <children>
                   <fx:include source="../pet/petdisplay.fxml" />
                </children>
             </StackPane>
          </children>
       </HBox>
+      <AnchorPane>
+         <children>
+            
+                        <ImageView fitHeight="160.0" fitWidth="315.0" layoutX="424.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/horizontal-logo.png" />
+               </image>
+            </ImageView>
+            <ToolBar layoutX="14.0" layoutY="14.0" orientation="VERTICAL" prefHeight="262.0" prefWidth="85.0" scaleShape="false" style="-fx-background-color: #EFEEE9;">
+              <items>
+                  <ImageView fx:id="SystemSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#MusicSettingClick" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/setting.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="PetSettingBTN" accessibleRole="BUTTON" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#PetSettingClick" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/pet.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="AnalysisBTN" fitHeight="80.0" fitWidth="80.0" onMouseClicked="#AnalysisClick" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@images/analysis.png" />
+                     </image>
+                  </ImageView>
+              </items>
+            </ToolBar>
+         </children>
+      </AnchorPane>
+      <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="910.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="JAVA - 21" textFill="#545454">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
    </children>
    <padding>
       <Insets top="20.0" />

@@ -1,5 +1,5 @@
 JAVA:20
-Test:8
+Test:10
 GAGA:0
 FUCK:0
 Math:100

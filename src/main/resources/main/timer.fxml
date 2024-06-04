@@ -14,7 +14,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefWidth="400.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.TimerController">
+<AnchorPane fx:id="rootPane" prefWidth="400.0" style="-fx-background-color: #EFEEE9;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.TimerController">
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="273.0" prefWidth="464.0" spacing="10.0">
           <padding>
@@ -24,7 +24,7 @@
          <AnchorPane minHeight="200.0" prefHeight="200.0" prefWidth="200.0">
             <children>
                <Arc fx:id="timerArc" fill="#1f93ff00" layoutX="222.0" layoutY="100.0" length="270.0" radiusX="100.0" radiusY="100.0" startAngle="45.0" stroke="WHITE" strokeType="OUTSIDE" strokeWidth="5.0" type="ROUND" />
-               <Circle fill="#f4f4f4" layoutX="222.0" layoutY="100.0" radius="100.0" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" />
+               <Circle fill="EFEEE9" layoutX="222.0" layoutY="100.0" radius="100.0" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" />
                     <Label fx:id="timerText" alignment="CENTER" layoutX="146.0" layoutY="36.0" prefHeight="128.0" prefWidth="153.0" text="00:00">
                         <font>
                             <Font name="System Bold" size="35.0" />
@@ -48,11 +48,11 @@
                         </items>
                     </ComboBox>
                     <ComboBox fx:id="subjectComboBox" editable="true" layoutX="54.0" layoutY="114.0" prefHeight="23.0" prefWidth="175.0" promptText="Choose or enter subject" />
-                    <Button layoutX="54.0" layoutY="151.0" mnemonicParsing="false" onAction="#addSubject" text="Add Subject" />
-                    <Button layoutX="160.0" layoutY="151.0" mnemonicParsing="false" onAction="#removeSubject" text="Remove Subject" />
+                    <Button layoutX="54.0" layoutY="151.0" mnemonicParsing="false" onAction="#addSubject" text="Update Subject" />
+                    <Button layoutX="175.0" layoutY="151.0" mnemonicParsing="false" onAction="#removeSubject" text="Remove Subject" />
                <ColorPicker fx:id="colorPicker" layoutX="260.0" layoutY="114.0" onAction="#changeColor" prefHeight="23.0" prefWidth="65.0" />
                <Rectangle fx:id="palette" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="43.0" layoutX="343.0" layoutY="104.0" stroke="#c6c3c3" strokeType="INSIDE" width="48.0" />
-                    <Button fx:id="startButton" layoutX="134.0" layoutY="23.0" mnemonicParsing="false" onAction="#startTimer" prefHeight="33.0" prefWidth="65.0" text="Start" />
+                    <Button fx:id="startButton" layoutX="134.0" layoutY="23.0" mnemonicParsing="false" onAction="#toggleTimer" onKeyPressed="#toggleTimer" prefHeight="33.0" prefWidth="65.0" text="Start" />
                     <Button layoutX="246.0" layoutY="23.0" mnemonicParsing="false" onAction="#resetTimer" prefHeight="33.0" prefWidth="65.0" text="Reset" />
                <Label fx:id="errorLabel" layoutX="214.0" layoutY="78.0" prefHeight="15.0" prefWidth="36.0" />
                 </children>
