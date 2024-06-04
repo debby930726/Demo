@@ -1,6 +1,7 @@
-JAVA:20
+JAVA:24
 Test:10
 GAGA:0
+ttt:4
 FUCK:0
 Math:100
 --colors--

@@ -32,12 +32,12 @@ public class MusicManager {
         return instance;
     }
     public void setSound(String selectedSound) {
+        soundIsPlaying = false;
         if (soundPlayer != null) {
             soundPlayer.stop();
         }
         if (selectedSound.equals("None")) {
             soundPlayer = null;
-            soundIsPlaying = false;
         } else {
             Media media = new Media(new File("src/main/resources/setting/sounds/" + selectedSound).toURI().toString());
             soundPlayer = new MediaPlayer(media);
@@ -55,6 +55,7 @@ public class MusicManager {
             Media media = new Media(new File("src/main/resources/setting/rings/" + selectedSound).toURI().toString());
             ringPlayer = new MediaPlayer(media);
             ringPlayer.setVolume(preferences.getDouble("ringVolume", 0.5));
+
         }
     }
     public void setSoundVolume(double volume) {
@@ -83,12 +84,18 @@ public class MusicManager {
     public void stopSound() {
         if (soundPlayer != null) {
             soundPlayer.stop();
+            soundIsPlaying = false;
+        }
+    }
+    public void pauseSound() {
+        if (soundPlayer != null) {
+            soundPlayer.pause();
+            soundIsPlaying = false;
         }
     }
     public void stopRing() {
         if (ringPlayer != null) {
             ringPlayer.stop();
-            soundIsPlaying = false;
         }
     }
     public boolean soundIsPlaying() {
