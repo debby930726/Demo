@@ -11,6 +11,7 @@ import analysis.SubjectChart;
 public class MainController {  // 跑主畫面
 
     private PetSetting petSetting;
+    private Settings settings;
 
     private Settings settings;
 
@@ -61,6 +62,22 @@ public class MainController {  // 跑主畫面
                 stage.setOnHidden(e -> settings = null); // 當視窗關閉時設置petSetting為null
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        } else {
+            System.out.println("已開啟視窗");
+        }
+    }
+    @FXML
+    private void MusicSettingClick(javafx.scene.input.MouseEvent event) {
+        if (settings == null) {
+            settings = new Settings();
+            try {
+                Stage stage = new Stage();
+                settings.start(stage);
+                stage.setOnHidden(e -> settings = null); // 當視窗關閉時設置petSetting為null
+            } catch (Exception e) {
+                e.printStackTrace();
+                // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式
             }
         } else {
             System.out.println("已開啟視窗");

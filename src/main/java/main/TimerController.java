@@ -23,7 +23,6 @@ import analysis.TimeRecord;
 import analysis.SubjectRecord;
 import setting.Settings;
 import javafx.scene.control.Alert;
-
 public class TimerController {
 
     @FXML
@@ -121,6 +120,7 @@ public class TimerController {
             statusLabel.setText("- Working -");
         }
 
+
         timerStarted = true;
         startButton.setText("Stop");
 
@@ -130,6 +130,9 @@ public class TimerController {
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             currentTimeSeconds--;
+            if(isWorking && !musicManager.soundIsPlaying()){//工作狀態時播放
+                musicManager.playSound();
+            }
             if (currentTimeSeconds <= 0) {
                 switchTimer();
             }

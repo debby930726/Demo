@@ -1,7 +1,9 @@
 package setting;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.util.prefs.Preferences;
 import main.MusicManager;
@@ -21,16 +23,15 @@ public class SettingsController {
 
     private Preferences preferences;
 
+    MusicManager musicManager = MusicManager.getInstance();
 
     public SettingsController() {
         preferences = Preferences.userNodeForPackage(SettingsController.class);
     }
 
-    MusicManager musicManager = MusicManager.getInstance();
     @FXML
     private void initialize() {
         // Add listener for volumeSlider
-        MusicManager musicManager = MusicManager.getInstance();
         soundVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (musicManager != null) {
                 musicManager.setSoundVolume(newValue.doubleValue());
@@ -48,15 +49,12 @@ public class SettingsController {
 
     @FXML
     private void applyWorkingSoundSettings() {
-        MusicManager musicManager = MusicManager.getInstance();
         String selectedSound = workingSoundComboBox.getValue();
         musicManager.setSound(selectedSound);
-
     }
 
     @FXML
     private void applyRingSettings() {
-        MusicManager musicManager = MusicManager.getInstance();
         String selectedRing = ringComboBox.getValue();
         musicManager.setRing(selectedRing);
     }
