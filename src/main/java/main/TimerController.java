@@ -118,7 +118,7 @@ public class TimerController {
             musicManager.playSound();// 工作狀態時播放
             statusLabel.setText("- Working -");
         }
-
+        musicManager.stopRing();
 
         timerStarted = true;
         startButton.setText("Stop");
