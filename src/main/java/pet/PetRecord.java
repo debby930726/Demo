@@ -1,91 +1,53 @@
 package pet;
 
-import java.io.*;
+import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PetRecord {
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/petrecord";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "@Nionio0726";
+
     public static void main(String[] args) {
         try {
-            // 開啟 subrecord.txt 檔案，使用 UTF-8 編碼
-            File inputFile = new File("src/main/resources/analysis/record/subrecord.txt");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
+            // 連接到資料庫
+            Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
-            // 建立 petrecord.txt 檔案，使用 UTF-8 編碼
-            File outputFile = new File("src/main/resources/pet/records/petrecord.txt");
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile, true), "UTF-8")); // 使用 true 表示附加到現有檔案
+            // 從資料庫中讀取資料
+            Map<String, String> petRecords = readPetRecordsFromDatabase(connection);
 
-            // 讀取檔案內容
-            String line;
-            boolean foundColors = false;
-            while ((line = reader.readLine()) != null) {
-                if (line.trim().equals("--colors--")) {
-                    foundColors = true;
-                    continue;
-                }
-
-                if (foundColors) {
-                    // 處理顏色資料，假設格式為 <名稱>:<顏色碼>
-                    String[] parts = line.split(":");
-                    String name = parts[0].trim();
-                    String color = parts[1].trim();
-
-                    // 檢查 petrecord.txt 中是否已存在相同的名稱
-                    boolean nameExists = checkNameExists(outputFile, name);
-
-                    // 如果名稱已存在，則更新該行的顏色部分
-                    if (nameExists) {
-                        updateColor(outputFile, name, color);
-                    } else {
-                        // 否則寫入新的名稱和顏色
-                        writer.write(name + " 小貓 " + color + "\n");
-                    }
-                }
+            // 處理讀取的資料（這裡只是簡單輸出）
+            for (Map.Entry<String, String> entry : petRecords.entrySet()) {
+                System.out.println("科目名稱：" + entry.getKey() + "，寵物名稱：" + entry.getValue());
             }
 
-            // 關閉檔案
-            reader.close();
-            writer.close();
+            // 關閉資料庫連接
+            connection.close();
 
-            System.out.println("petrecord.txt 已成功更新資料。");
-
-        } catch (IOException e) {
-            System.out.println("處理檔案時發生錯誤：" + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("連接資料庫時發生錯誤：" + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // 檢查名稱是否已存在 petrecord.txt 中
-    private static boolean checkNameExists(File file, String name) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.startsWith(name)) {
-                reader.close();
-                return true;
+    // 從資料庫中讀取寵物記錄
+    private static Map<String, String> readPetRecordsFromDatabase(Connection connection) throws SQLException {
+        Map<String, String> petRecords = new HashMap<>();
+
+        // 創建 Statement 對象
+        try (Statement statement = connection.createStatement()) {
+            // 執行 SQL 查詢語句
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM record");
+
+            // 遍歷結果集並將數據存儲到 petRecords 中
+            while (resultSet.next()) {
+                String subject = resultSet.getString("subject");
+                String name = resultSet.getString("name");
+                petRecords.put(subject, name);
             }
         }
-        reader.close();
-        return false;
-    }
 
-    // 更新 petrecord.txt 中指定名稱的顏色
-    private static void updateColor(File file, String name, String newColor) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-        StringBuilder content = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.startsWith(name)) {
-                // 更新該行的顏色部分
-                String[] parts = line.split(" ");
-                parts[2] = newColor;
-                line = String.join(" ", parts);
-            }
-            content.append(line).append("\n");
-        }
-        reader.close();
-
-        // 覆寫檔案內容
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
-        writer.write(content.toString());
-        writer.close();
+        return petRecords;
     }
 }

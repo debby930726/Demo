@@ -48,7 +48,6 @@ public class TimerController {
     private boolean isWorking = true;
     private Timeline timeline;
     private boolean timerStarted = false;
-    private TimeRecord timeRecord = new TimeRecord();
     private SubjectRecord subjectRecord = new SubjectRecord();
     private int pomodoroCount = 1;
 
@@ -256,7 +255,6 @@ public class TimerController {
         } else {
             currentTimeSeconds = workTimeSeconds;
             showAlert("Break is over! Please select the work time and press start.");
-            timeRecord.recordPomodoro(pomodoroCount == 2); // 记录番茄钟
             String selectedSubject = subjectComboBox.getValue();
             statusLabel.setText("- Working -"); // 切換狀態
             if (selectedSubject != null && !selectedSubject.isEmpty()) {

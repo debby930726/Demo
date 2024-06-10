@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -12,16 +13,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.File;
-import javafx.scene.control.Label;
+import java.io.*;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class DisplayController {
@@ -41,90 +38,9 @@ public class DisplayController {
     @FXML
     private Label infoLabel;
 
+    private List<String> pets;
     private PetSetting petSetting;
     private TextSetting textSettings;
-    private List<String> pets;
-    private String petName;
-    private PetRecord petRecord; // 新增PetRecord類的成員變量
-
-    @FXML
-    public void initialize() {
-        handleComboBoxAction();
-        Rectangle border1 = new Rectangle(imgpane.getPrefWidth(), imgpane.getPrefHeight());
-        border1.setFill(Color.web("white"));
-
-        imgpane.getChildren().add(border1);
-    }
-
-    @FXML
-    private void handleUpdateButtonAction() {
-        // 在按下 updateButton 時啟用 PetRecord
-        try {
-            // 設置 Java 程序的執行命令，確保 classpath 指向包含 PetRecord.class 的目錄
-            ProcessBuilder pb = new ProcessBuilder("java", "-cp", "target/classes", "pet.PetRecord");
-            pb.redirectOutput(new File("update.log")); // 將輸出重定向到日誌檔案
-            Process process = pb.start();
-            process.waitFor(); // 等待過程完成
-            System.out.println("PetRecord.java 已成功執行。");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            System.out.println("執行 PetRecord.java 時發生錯誤：" + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleComboBoxAction() {
-        try {
-            pets = loadPets("src/main/resources/pet/records/petrecord.txt");
-            petComboBox.getItems().setAll(pets);
-            // 在選擇 ComboBox 時尋找相應的圖片並插入到 Pane 中
-            petComboBox.setOnAction(event -> {
-                String selectedPet = petComboBox.getValue();
-                if (selectedPet != null) {// 在這裡設置 petName
-                    String imageName = selectedPet.substring(selectedPet.lastIndexOf(" ") + 1);
-                    String imagePath = "src/main/resources/pet/records/" + imageName + ".png";
-                    File imageFile = new File(imagePath);
-                    if (imageFile.exists()) {
-                        Image image = new Image(imageFile.toURI().toString());
-                        ImageView imageView = new ImageView(image);
-                        imageView.setFitWidth(imgpane.getPrefWidth()); // 符合Pane大小
-                        imageView.setFitHeight(imgpane.getPrefHeight());
-                        imageView.setOnMouseClicked(event1 -> handleImageClick()); // 將點擊事件綁定到 handleImageClick 方法
-                        petName = imageName;
-                        imgpane.getChildren().clear();
-                        imgpane.getChildren().add(imageView);
-                        // 清空 Label
-                        infoLabel.setText("");
-                    } else {
-                        // 圖片文件不存在，顯示警告對話框
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                        alert.setTitle("通知");
-                        alert.setHeaderText("找不到寵物");
-                        alert.setContentText("你還沒有創建" + imageName + "的寵物樣貌喔!");
-                        alert.showAndWait();
-                    }
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void handleImageClick() {
-        // 刪除時間->左手邊就有時間了
-        // 設置 Label 的文本為當前時間和圖片名字
-        String labelText =  petName + "：";
-
-        // 從 textrecord.txt 中讀取一句話
-        String randomSentence = getRandomSentence();
-
-        // 將讀取的句子添加到 Label 的文本後面
-        labelText += "\n" + randomSentence;
-
-        // 設置 Label 的文本
-        infoLabel.setText(labelText);
-    }
 
     @FXML
     private void openSetting1() {
@@ -160,45 +76,77 @@ public class DisplayController {
         }
     }
 
+    @FXML
+    public void initialize() {
+        // 初始化 ComboBox
+        handleComboBoxAction();
+        // 在圖片面板中添加一個白色的矩形作為背景
+        Rectangle border1 = new Rectangle(imgpane.getPrefWidth(), imgpane.getPrefHeight());
+        border1.setFill(Color.web("white"));
+        imgpane.getChildren().add(border1);
+    }
 
-    private List<String> loadPets(String filePath) throws IOException {
-        List<String> pets = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(" ");
-                if (parts.length > 1) {
-                    pets.add(parts[1].trim());
+    @FXML
+    private void handleUpdateButtonAction() {
+        try {
+            // 連接到 MySQL 資料庫
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/petrecord", "root", "@Nionio0726");
+
+            // 從資料庫中讀取寵物列表
+            List<String> petsFromDB = readPetsFromDatabase(connection);
+
+            // 更新 ComboBox 中的選項
+            petComboBox.getItems().setAll(petsFromDB);
+
+            // 關閉資料庫連接
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("連接資料庫時發生錯誤：" + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleComboBoxAction() {
+        // 設置 ComboBox 的事件處理程序
+        petComboBox.setOnAction(event -> {
+            String selectedPet = petComboBox.getValue();
+            if (selectedPet != null) {
+                // 在此處加載並顯示相應的寵物圖像
+                String imagePath = "src/main/resources/pet/records/" + selectedPet.toLowerCase() + ".png";
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    Image image = new Image(imageFile.toURI().toString());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(imgpane.getPrefWidth());
+                    imageView.setFitHeight(imgpane.getPrefHeight());
+                    imgpane.getChildren().clear();
+                    imgpane.getChildren().add(imageView);
+                    infoLabel.setText(""); // 清空資訊標籤
+                } else {
+                    // 若找不到圖片，顯示警告訊息
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("警告");
+                    alert.setHeaderText("找不到寵物圖片");
+                    alert.setContentText("請確認圖片是否存在：" + imagePath);
+                    alert.showAndWait();
                 }
+            }
+        });
+    }
+
+    private List<String> readPetsFromDatabase(Connection connection) throws SQLException {
+        List<String> pets = new ArrayList<>();
+        try (Statement statement = connection.createStatement()) {
+            // 執行 SQL 查詢，獲取寵物列表
+            ResultSet resultSet = statement.executeQuery("SELECT name FROM record");
+
+            // 遍歷結果，將寵物名稱添加到列表中
+            while (resultSet.next()) {
+                String petName = resultSet.getString("name");
+                pets.add(petName);
             }
         }
         return pets;
     }
-
-    private List<String> getRandomSentences() {
-        List<String> sentences = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/records/textrecord.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.replaceAll("<br>", "\n"); // 將替換後的結果重新賦值給 line
-                sentences.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sentences;
-    }
-
-    private String getRandomSentence() {
-        List<String> sentences = getRandomSentences();
-        if (!sentences.isEmpty()) {
-            // 隨機生成索引以選擇一個句子
-            int randomIndex = new Random().nextInt(sentences.size());
-            return sentences.get(randomIndex);
-        } else {
-            return "";
-        }
-    }
-
-
 }

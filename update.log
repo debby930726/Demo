@@ -1,1 +1,1 @@
-petrecord.txt 已成功更新資料。
+連接資料庫時發生錯誤：No suitable driver found for jdbc:mysql://localhost:3306/petrecord
