@@ -13,6 +13,7 @@ module demo {
     requires javafx.media;
     requires java.prefs;
     requires javafx.swing;
+    requires java.sql;
 
 
     exports main;
