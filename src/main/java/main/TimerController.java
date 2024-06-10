@@ -21,8 +21,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import analysis.TimeRecord;
 import analysis.SubjectRecord;
-import setting.Settings;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.stage.WindowEvent;
+
 public class TimerController {
 
     @FXML
@@ -53,6 +55,8 @@ public class TimerController {
     private int pomodoroCount = 1;
 
     MusicManager musicManager = MusicManager.getInstance();
+    Stage primaryStage;
+    WindowController windowController = new WindowController();
 
     @FXML
     private Label timerText;
@@ -109,6 +113,8 @@ public class TimerController {
 
     @FXML
     private void startTimer() {
+        primaryStage = (Stage) timeComboBox.getScene().getWindow();
+        windowController.setPrimaryStage(primaryStage);
 
         if (subjectComboBox.getValue() == null || subjectComboBox.getValue().isEmpty()) {
             showAlert("Please select a subject before starting the timer.");
@@ -117,6 +123,7 @@ public class TimerController {
         if(isWorking){
             musicManager.playSound();// 工作狀態時播放
             statusLabel.setText("- Working -");
+            windowController.setHighest();
         }
         musicManager.stopRing();
 
@@ -161,6 +168,7 @@ public class TimerController {
         if (timeline != null) {
             timeline.stop();
         }
+        windowController.removeHighest();
         musicManager.stopSound();//停止所有聲音
         musicManager.stopRing();
         currentTimeSeconds = workTimeSeconds;
@@ -213,7 +221,6 @@ public class TimerController {
         timeComboBox.setItems(FXCollections.observableArrayList("25 minutes", "50 minutes"));
         timeComboBox.setValue("25 minutes"); // Set default value
         updateTimeSettings(); // Initialize timer settings based on default value
-
         // Load subjects from SubjectRecord and add them to subjectComboBox
         subjectComboBox.setItems(FXCollections.observableArrayList(subjectRecord.getSubjects()));
         subjectComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -249,6 +256,7 @@ public class TimerController {
         timerStarted = false;
         startButton.setText("Start");
         if (isWorking) {
+            windowController.removeHighest();
             currentTimeSeconds = breakTimeSeconds;
             showAlert("Time to take a break! Please press start to begin the break.");
             statusLabel.setText("- Break -"); // 切換狀態
@@ -277,7 +285,8 @@ public class TimerController {
 
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/main/images/icon.png")));
-
+            Stage primaryStage = (Stage) startButton.getScene().getWindow();
+            alert.initOwner(primaryStage);
             alert.showAndWait();
         });
     }
@@ -302,6 +311,5 @@ public class TimerController {
         // 確保扇形動畫的平滑度
         timerArc.setCache(true);
     }
-
 
 }

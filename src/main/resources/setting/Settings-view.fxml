@@ -34,11 +34,11 @@
                 <Label text="Choose Working Sound:" GridPane.rowIndex="1" />
                 <ComboBox fx:id="workingSoundComboBox" GridPane.rowIndex="2" />
                 <Label text="Set Working Sound Volume:" GridPane.rowIndex="3" />
-                <Slider fx:id="soundVolumeSlider" majorTickUnit="0.1" max="1" min="0" value="0.5" GridPane.rowIndex="4" />
+                <Slider fx:id="soundVolumeSlider" majorTickUnit="0.1" max="0.5" min="0" value="0.5" GridPane.rowIndex="4" />
                 <Label text="Choose Ring:" GridPane.rowIndex="5" />
                 <ComboBox fx:id="ringComboBox" GridPane.rowIndex="6" />
                 <Label text="Set Ring Volume:" GridPane.rowIndex="7" />
-                <Slider fx:id="ringVolumeSlider" majorTickUnit="0.1" max="1" min="0" value="0.5" GridPane.rowIndex="8" />
+                <Slider fx:id="ringVolumeSlider" majorTickUnit="0.1" max="0.5" min="0" value="0.5" GridPane.rowIndex="8" />
                 <Button onAction="#applyAllSettings" text="Apply All Settings" GridPane.columnIndex="1" GridPane.rowIndex="9" />
             </children>
         </GridPane>

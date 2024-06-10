@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TimeRecord {  //  存取Time資料
-    private static final String FILE_NAME = "//main/resources/analysis/record/record.txt";
+    private static final String FILE_NAME = "src/main/resources/analysis/record/record.txt";
     private Map<LocalDate, Integer> recordMap = new HashMap<>();
 
     public void recordPomodoro(boolean isLongPomodoro) {
