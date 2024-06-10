@@ -95,7 +95,7 @@ public class TimerController {
     private void updateTimeSettings() {
         String selectedTime = timeComboBox.getValue();
         if (selectedTime.equals("50 minutes")) {
-            workTimeMinutes = 1;
+            workTimeMinutes = 50;
             pomodoroCount = 2;
         } else {
             workTimeMinutes = 25;
@@ -114,12 +114,11 @@ public class TimerController {
             showAlert("Please select a subject before starting the timer.");
             return;
         }
-
         if(isWorking){
             musicManager.playSound();// 工作狀態時播放
             statusLabel.setText("- Working -");
         }
-
+        musicManager.stopRing();
 
         timerStarted = true;
         startButton.setText("Stop");
@@ -129,7 +128,7 @@ public class TimerController {
         }
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            currentTimeSeconds--;
+            currentTimeSeconds-=150;
             if(isWorking && !musicManager.soundIsPlaying()){//工作狀態時播放
                 musicManager.playSound();
             }
@@ -151,6 +150,9 @@ public class TimerController {
         statusLabel.setText("- Stopped -");
         if (timeline != null) {
             timeline.stop();
+            if(musicManager.soundIsPlaying()){//工作狀態時播放
+                musicManager.pauseSound();
+            }
         }
     }
 
@@ -245,6 +247,7 @@ public class TimerController {
         musicManager.stopSound();//停止音樂
         musicManager.playRing();//撥放鈴聲
         timerStarted = false;
+        startButton.setText("Start");
         if (isWorking) {
             currentTimeSeconds = breakTimeSeconds;
             showAlert("Time to take a break! Please press start to begin the break.");
