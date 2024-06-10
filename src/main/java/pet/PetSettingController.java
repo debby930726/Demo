@@ -12,11 +12,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.image.*;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import javafx.scene.input.MouseEvent;
-import java.io.FileWriter;
+import javafx.scene.control.Button;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,7 @@ import java.awt.image.BufferedImage;
 import java.sql.*;
 import java.util.Objects;
 
-
-public class PetSettingController { // PetSetting的控制項
+public class PetSettingController {
 
     @FXML
     private AnchorPane anchorPane;
@@ -57,6 +56,9 @@ public class PetSettingController { // PetSetting的控制項
     private ColorPicker colorPicker;
 
     private Connection connection;
+
+    @FXML
+    private Button uploadbutton; // 新增按鈕
 
     @FXML
     public void initialize() {
@@ -90,11 +92,6 @@ public class PetSettingController { // PetSetting的控制項
             rectangle.toFront();
             drawingPane2.getChildren().add(border2);
 
-
-            // 綁定添加按鈕的事件處理
-            //addButton.setOnAction(event -> handleAddButtonAction());
-
-            // 當 ComboBox 的值改變時，更新長方形的顏色和圖片數量
             petComboBox.setOnAction(event -> {
                 String selectedPet = petComboBox.getValue();
                 if (selectedPet != null) {
@@ -103,7 +100,7 @@ public class PetSettingController { // PetSetting的控制項
                     rectangle.setFill(Color.web(color));
                     petNameTextField.setText(name); // 顯示名字
 
-                    // 清空 drawingPane1 中的图片
+                    // 清空 drawingPane1 中的圖片
                     List<Node> nodesToRemove = new ArrayList<>();
                     for (Node node : drawingPane1.getChildren()) {
                         if (node instanceof ImageView) {
@@ -112,7 +109,7 @@ public class PetSettingController { // PetSetting的控制項
                     }
                     drawingPane1.getChildren().removeAll(nodesToRemove); // 更新combobox時刪除所有圖片
 
-                    // 清空 drawingPane2 中的图片
+                    // 清空 drawingPane2 中的圖片
                     drawingPane2.getChildren().clear();
                     drawingPane2.getChildren().add(border2);
 
@@ -190,6 +187,33 @@ public class PetSettingController { // PetSetting的控制項
             System.out.println("請輸入有效的名稱"); // 輸入無效名稱時顯示錯誤訊息
         }
     }
+
+    @FXML
+    private void handleUploadButtonAction() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+            try {
+                BufferedImage bufferedImage = ImageIO.read(selectedFile);
+                String petName = petComboBox.getValue();
+                String fileName = petName + ".png";
+
+                File destinationFile = new File("src/main/resources/pet/records/" + fileName);
+                ImageIO.write(bufferedImage, "png", destinationFile);
+                System.out.println("Image uploaded to: " + destinationFile.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Failed to upload image: " + e.getMessage());
+            }
+        }
+    }
+
+
     private List<String> readPetsFromDatabase() throws SQLException {
         List<String> pets = new ArrayList<>();
         Statement statement = connection.createStatement();
@@ -207,6 +231,7 @@ public class PetSettingController { // PetSetting的控制項
         preparedStatement.setString(2, selectedPet);
         preparedStatement.executeUpdate();
     }
+
     public String getNameFromPetRecord(String selectedPet) {
         String petName = ""; // 默認為空字符串
         try {
