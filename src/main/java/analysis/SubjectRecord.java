@@ -9,14 +9,9 @@ public class SubjectRecord {
     private Map<String, Integer> subjectMap;
     private Map<String, Color> colorMap;
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/petrecord";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "@Nionio0726";
-
     public SubjectRecord() {
-        subjectMap = new HashMap<>();
-        colorMap = new HashMap<>();
-        loadFromDatabase();
+        subjectMap = DBQuery.getSubjectData();
+        colorMap = loadColorData();
     }
 
     public void recordColor(String subject, Color color) {
@@ -35,7 +30,7 @@ public class SubjectRecord {
     }
 
     private void saveToDatabase() {
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+        try (Connection connection = DBConnection.getConnection()) {
             String deleteSQL = "DELETE FROM record";
             try (Statement statement = connection.createStatement()) {
                 statement.executeUpdate(deleteSQL);
@@ -57,25 +52,23 @@ public class SubjectRecord {
         }
     }
 
-    private void loadFromDatabase() {
-        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String querySQL = "SELECT * FROM record";
-            try (Statement statement = connection.createStatement();
-                 ResultSet resultSet = statement.executeQuery(querySQL)) {
+    private Map<String, Color> loadColorData() {
+        Map<String, Color> colorMap = new HashMap<>();
 
-                while (resultSet.next()) {
-                    String subject = resultSet.getString("subject");
-                    String name = resultSet.getString("name");
-                    String colorString = resultSet.getString("color");
-                    int times = resultSet.getInt("times");
+        try (Connection connection = DBConnection.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT subject, color FROM record")) {
 
-                    subjectMap.put(subject, times);
-                    colorMap.put(subject, stringToColor(colorString));
-                }
+            while (resultSet.next()) {
+                String subject = resultSet.getString("subject");
+                String colorString = resultSet.getString("color");
+                colorMap.put(subject, stringToColor(colorString));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return colorMap;
     }
 
     private String colorToString(Color color) {

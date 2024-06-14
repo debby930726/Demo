@@ -32,6 +32,9 @@ public class SettingsController {
     @FXML
     private void initialize() {
         // Add listener for volumeSlider
+        workingSoundComboBox.setValue(null);
+        ringComboBox.setValue(null);
+
         soundVolumeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (musicManager != null) {
                 musicManager.setSoundVolume(newValue.doubleValue());

@@ -19,11 +19,9 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import analysis.TimeRecord;
 import analysis.SubjectRecord;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.stage.WindowEvent;
 
 public class TimerController {
 

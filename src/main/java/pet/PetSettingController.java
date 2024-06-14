@@ -1,5 +1,7 @@
 package pet;
 
+import analysis.DBConnection;
+import analysis.DBQuery;
 import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
@@ -27,6 +29,8 @@ import javafx.scene.SnapshotParameters;
 import java.awt.image.BufferedImage;
 import java.sql.*;
 import java.util.Objects;
+
+import static analysis.DBQuery.*;
 
 public class PetSettingController {
 
@@ -64,7 +68,7 @@ public class PetSettingController {
     public void initialize() {
         try {
             // 連接到 MySQL 資料庫
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/petrecord", "root", "@Nionio0726");
+            connection = DBConnection.getConnection();
 
             // 初始化下拉式選單
             handleComboBoxAction();
@@ -95,8 +99,18 @@ public class PetSettingController {
             petComboBox.setOnAction(event -> {
                 String selectedPet = petComboBox.getValue();
                 if (selectedPet != null) {
-                    String color = getColorFromPetRecord(selectedPet);
-                    String name = getNameFromPetRecord(selectedPet); // 拿取寵物名字
+                    String color = null;
+                    try {
+                        color = getColorFromPetRecord(selectedPet);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    String name = null; // 拿取寵物名字
+                    try {
+                        name = getNameFromPetRecord(selectedPet);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                     rectangle.setFill(Color.web(color));
                     petNameTextField.setText(name); // 顯示名字
 
@@ -115,7 +129,12 @@ public class PetSettingController {
 
                     // 根據番茄鐘次數更新圖片
                     String petName = selectedPet.split(" ")[0];
-                    int tomatoCount = getTomatoCountFromPetRecord(petName);
+                    int tomatoCount = 0;
+                    try {
+                        tomatoCount = getTomatoCountFromPetRecord(petName);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                     int imageCount = tomatoCount / 5;
 
                     // 重新加载图片到 drawingPane2 中
@@ -134,7 +153,7 @@ public class PetSettingController {
     @FXML
     private void handleComboBoxAction() {
         try {
-            pets = readPetsFromDatabase();
+            pets = DBQuery.readPetsFromDatabase();
             petComboBox.getItems().setAll(pets);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -143,13 +162,13 @@ public class PetSettingController {
     }
 
     @FXML
-    private void handleAddButtonAction() {
+    private void handleAddButtonAction() throws SQLException {
         String selectedPet = petComboBox.getValue();
         String newName = petNameTextField.getText().trim();
 
-        if (selectedPet != null && !Objects.equals(newName, getNameFromPetRecord(selectedPet))) {
+        if (selectedPet != null && !Objects.equals(newName, DBQuery.getNameFromPetRecord(selectedPet))) {
             try {
-                updatePetNameInDatabase(selectedPet, newName);
+                DBQuery.updatePetNameInDatabase(selectedPet, newName);
                 handleComboBoxAction(); // 更新 ComboBox
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -158,9 +177,14 @@ public class PetSettingController {
         }
     }
 
+
     @FXML
     private void handleSaveButtonAction() {
-        handleAddButtonAction();  // 更新名字綁在儲存資料內
+        try {
+            handleAddButtonAction();  // 更新名字綁在儲存資料內
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         String selectedPetName = petComboBox.getValue();
         String newName = petNameTextField.getText().trim(); // 從文字框中獲取新名稱
@@ -212,42 +236,6 @@ public class PetSettingController {
             }
         }
     }
-
-
-    private List<String> readPetsFromDatabase() throws SQLException {
-        List<String> pets = new ArrayList<>();
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("SELECT name FROM record");
-        while (resultSet.next()) {
-            String petName = resultSet.getString("name");
-            pets.add(petName);
-        }
-        return pets;
-    }
-
-    private void updatePetNameInDatabase(String selectedPet, String newName) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("UPDATE record SET name = ? WHERE name = ?");
-        preparedStatement.setString(1, newName);
-        preparedStatement.setString(2, selectedPet);
-        preparedStatement.executeUpdate();
-    }
-
-    public String getNameFromPetRecord(String selectedPet) {
-        String petName = ""; // 默認為空字符串
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT name FROM record WHERE name = ?");
-            preparedStatement.setString(1, selectedPet);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                petName = resultSet.getString("name");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // 處理 SQL 錯誤
-        }
-        return petName;
-    }
-
     private void enableDragAndDrop(Node node) {
         final Delta dragDelta = new Delta();
 
@@ -367,37 +355,4 @@ public class PetSettingController {
             }
         });
     }
-
-    private String getColorFromPetRecord(String selectedPet) {
-        String color = "#000000"; // 默認為黑色
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT color FROM record WHERE name = ?");
-            preparedStatement.setString(1, selectedPet);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                color = resultSet.getString("color");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // 處理 SQL 錯誤
-        }
-        return color;
-    }
-
-    private int getTomatoCountFromPetRecord(String selectedPet) {
-        int tomatoCount = 0;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT times FROM record WHERE name = ?");
-            preparedStatement.setString(1, selectedPet);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                tomatoCount = resultSet.getInt("times");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // 處理 SQL 錯誤
-        }
-        return tomatoCount;
-    }
-
 }

@@ -14,6 +14,10 @@ module demo {
     requires java.prefs;
     requires javafx.swing;
     requires java.sql;
+    requires org.slf4j;
+    requires org.slf4j.simple;
+    requires org.xerial.sqlitejdbc;
+
 
 
     exports main;

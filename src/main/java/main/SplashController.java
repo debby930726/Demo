@@ -42,8 +42,6 @@ public class SplashController {
             Pane mainPane = loader.load();
             Scene mainScene = new Scene(mainPane);
             primaryStage.setScene(mainScene);
-            // 加載CSS
-            mainScene.getStylesheets().add(getClass().getResource("/main/style/main.css").toExternalForm());
         } catch (IOException e) {
             e.printStackTrace();
         }

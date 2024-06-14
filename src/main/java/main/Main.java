@@ -1,5 +1,6 @@
 package main;
 
+import analysis.DBConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,6 +19,7 @@ public class Main extends Application {  // 主檔案
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/main/splash.fxml"));
         Pane splashPane = loader.load();
         Scene splashScene = new Scene(splashPane);
+        DBConnection.initializeDatabase();
 
         //  初始設定
         primaryStage.setTitle("讀生有伴 Study Pet");
@@ -32,4 +34,5 @@ public class Main extends Application {  // 主檔案
     public static void main(String[] args) {
         launch(args);
     }
+
 }
