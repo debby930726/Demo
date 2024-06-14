@@ -1,5 +1,7 @@
 package main;
 
+import analysis.DBQuery;
+import pet.DisplayController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -22,6 +24,8 @@ import javafx.collections.FXCollections;
 import analysis.SubjectRecord;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+
+import java.sql.SQLException;
 
 public class TimerController {
 
@@ -106,13 +110,13 @@ public class TimerController {
         breakTimeSeconds = breakTimeMinutes * 60;
         currentTimeSeconds = workTimeSeconds;
         updateTimerLabel();
+        resetTimer();
     }
 
     @FXML
     private void startTimer() {
         primaryStage = (Stage) timeComboBox.getScene().getWindow();
         windowController.setPrimaryStage(primaryStage);
-
         if (subjectComboBox.getValue() == null || subjectComboBox.getValue().isEmpty()) {
             showAlert("Please select a subject before starting the timer.");
             return;
@@ -170,6 +174,7 @@ public class TimerController {
         musicManager.stopRing();
         currentTimeSeconds = workTimeSeconds;
         isWorking = true;
+        statusLabel.setText("");
         timerStarted = false;
         updateTimerLabel();
         startButton.setText("Start");
@@ -177,8 +182,9 @@ public class TimerController {
     }
 
     @FXML
-    private void addSubject() { // 新增subject
+    private void addSubject() throws SQLException { // 新增subject
         String newSubject = subjectComboBox.getEditor().getText();
+        Color mycolor = colorPicker.getValue();
         if (newSubject != null && !newSubject.isEmpty()) {
             // 檢查 newSubject 是否已經在 ComboBox 中
             boolean exists = subjectComboBox.getItems().stream()
@@ -187,6 +193,10 @@ public class TimerController {
                 subjectComboBox.getItems().add(newSubject);
                 subjectComboBox.setValue(newSubject);
                 subjectRecord.recordPomodoro(newSubject, 0);
+                subjectRecord.recordColor(newSubject, mycolor);
+                if (DBQuery.getNameData().get(newSubject) == null) {
+                    SubjectRecord.recordName(newSubject,newSubject);
+                }
             } else {
                 // 跳出提示框提醒使用者該項目已經存在
                 Alert alert = new Alert(AlertType.INFORMATION);
@@ -204,13 +214,15 @@ public class TimerController {
         if (selectedSubject != null && !selectedSubject.isEmpty()) {
             subjectComboBox.getItems().remove(selectedSubject);
             subjectComboBox.setValue(null); // Clear the selection
-            subjectRecord.removeSubject(selectedSubject); // Remove from subrecord.txt
+            subjectRecord.removeSubject(selectedSubject);
         }
     }
 
     @FXML
     public void initialize()  //顯示給人選擇時間的combobox
     {
+        colorPicker.setValue(Color.WHITE);
+
         timerArc.setType(ArcType.OPEN);// 初始化背景圓圈動畫
         updateTimerArc();
         statusLabel.setText("");

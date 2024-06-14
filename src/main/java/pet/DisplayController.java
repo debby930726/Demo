@@ -3,20 +3,24 @@ package pet;
 import analysis.DBQuery;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class DisplayController {
 
@@ -27,39 +31,9 @@ public class DisplayController {
     private ComboBox<String> petComboBox;
 
     @FXML
-    private Button settingButton;
-
-    @FXML
-    private Button settingButton2;
-
-    @FXML
-    private Button updateButton;
-
-    @FXML
-    private AnchorPane borderPane;
-
-    @FXML
     private Label infoLabel;
 
-    private PetSetting petSetting;
     private TextSetting textSettings;
-
-    @FXML
-    private void openSetting1() {
-        if (petSetting == null) {
-            petSetting = new PetSetting();
-            try {
-                Stage stage = new Stage();
-                petSetting.start(stage);
-                stage.setOnHidden(event -> petSetting = null); // 當視窗關閉時設置petSetting為null
-            } catch (Exception e) {
-                e.printStackTrace();
-                // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式
-            }
-        } else {
-            System.out.println("已開啟視窗");
-        }
-    }
 
     @FXML
     private void openSetting2() {
@@ -68,7 +42,7 @@ public class DisplayController {
             try {
                 Stage stage = new Stage();
                 textSettings.start(stage);
-                stage.setOnHidden(event -> textSettings = null); // 當視窗關閉時設置petSetting為null
+                stage.setOnHidden(event -> textSettings = null); // 當視窗關閉時設置textSettings為null
             } catch (Exception e) {
                 e.printStackTrace();
                 // 可以選擇在此處顯示錯誤訊息或採取其他適當的處理方式
@@ -81,6 +55,7 @@ public class DisplayController {
     @FXML
     public void initialize() {
         // 初始化 ComboBox
+        updatePetComboBox();
         handleComboBoxAction();
         // 在圖片面板中添加一個白色的矩形作為背景
         Rectangle border1 = new Rectangle(imgpane.getPrefWidth(), imgpane.getPrefHeight());
@@ -90,13 +65,17 @@ public class DisplayController {
 
     @FXML
     private void handleUpdateButtonAction() {
+        updatePetComboBox();
+    }
+
+    public void updatePetComboBox() {
         try {
             // 從資料庫中讀取寵物列表
-            List<String> petsFromDB = DBQuery.readPetsFromDatabase();
-
+            Map<String, String> nameData = DBQuery.getNameData();
+            List<String> petNames = new ArrayList<>(nameData.values());
             // 更新 ComboBox 中的選項
-            petComboBox.getItems().setAll(petsFromDB);
-        } catch (SQLException e) {
+            petComboBox.getItems().setAll(petNames);
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("連接資料庫時發生錯誤：" + e.getMessage());
         }
@@ -109,15 +88,15 @@ public class DisplayController {
             String selectedPet = petComboBox.getValue();
             if (selectedPet != null) {
                 try {
-                    // 獲取寵物名稱、顏色和番茄鐘時間
-                    String petName = DBQuery.getNameFromPetRecord(selectedPet);
-                    int tomatoCount = DBQuery.getTomatoCountFromPetRecord(selectedPet);
+                    // 獲取寵物名稱和番茄鐘時間
+                    Map<String, String> nameData = DBQuery.getNameData();
+                    String petName = nameData.get(selectedPet);
+                    Map<String, Integer> subjectData = DBQuery.getSubjectData();
+                    int tomatoCount = subjectData.getOrDefault(selectedPet, 0);
 
                     // 更新圖片和信息標籤
                     updatePetImage(selectedPet.toLowerCase());
-                    updateInfoLabel(petName, tomatoCount);
-
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     // 若發生錯誤，顯示警告訊息
                     Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -138,8 +117,10 @@ public class DisplayController {
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(imgpane.getPrefWidth());
             imageView.setFitHeight(imgpane.getPrefHeight());
+            imageView.setOnMouseClicked(event1 -> handleImageClick(petName)); // 將點擊事件綁定到 handleImageClick 方法
             imgpane.getChildren().clear();
             imgpane.getChildren().add(imageView);
+
         } else {
             // 若找不到圖片，顯示警告訊息
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -150,7 +131,43 @@ public class DisplayController {
         }
     }
 
-    private void updateInfoLabel(String petName, int tomatoCount) {
-        infoLabel.setText("名稱：" + petName + "\n番茄鐘時間：" + tomatoCount);
+    @FXML
+    private void handleImageClick(String petName) {
+        // 設置 Label 的文本為圖片名字
+        String labelText = petName + "：";
+
+        // 從 textrecord.txt 中讀取一句話
+        String randomSentence = getRandomSentence();
+
+        // 將讀取的句子添加到 Label 的文本後面
+        labelText += "\n" + randomSentence;
+
+        // 設置 Label 的文本
+        infoLabel.setText(labelText);
+    }
+
+    private List<String> getRandomSentences() {
+        List<String> sentences = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/records/textrecord.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.replaceAll("<br>", "\n"); // 將替換後的結果重新賦值給 line
+                sentences.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sentences;
+    }
+
+    private String getRandomSentence() {
+        List<String> sentences = getRandomSentences();
+        if (!sentences.isEmpty()) {
+            // 隨機生成索引以選擇一個句子
+            int randomIndex = new Random().nextInt(sentences.size());
+            return sentences.get(randomIndex);
+        } else {
+            return "";
+        }
     }
 }

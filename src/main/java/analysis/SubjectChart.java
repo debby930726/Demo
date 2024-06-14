@@ -7,6 +7,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Objects;
 
 public class SubjectChart extends Application {
     private Map<String, Integer> subjectMap;
-    private Map<String, String> colorMap;
+    private Map<String, Color> colorMap;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,11 +39,11 @@ public class SubjectChart extends Application {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         for (Map.Entry<String, Integer> entry : subjectMap.entrySet()) {
             XYChart.Data<String, Number> data = new XYChart.Data<>(entry.getKey(), entry.getValue());
-            String color = colorMap.get(entry.getKey());
+            Color color = colorMap.get(entry.getKey());
 
             data.nodeProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    newValue.setStyle("-fx-bar-fill: " + color + ";");
+                    newValue.setStyle("-fx-bar-fill: #" + color.toString().substring(2) + ";");
                 }
             });
 

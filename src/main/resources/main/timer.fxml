@@ -48,10 +48,10 @@
                         </items>
                     </ComboBox>
                     <ComboBox fx:id="subjectComboBox" editable="true" layoutX="54.0" layoutY="114.0" prefHeight="23.0" prefWidth="175.0" promptText="Choose or enter subject" />
-                    <Button layoutX="54.0" layoutY="151.0" mnemonicParsing="false" onAction="#addSubject" text="Update Subject" />
+                    <Button layoutX="54.0" layoutY="151.0" mnemonicParsing="false" onAction="#addSubject" text="Add Subject" />
                     <Button layoutX="175.0" layoutY="151.0" mnemonicParsing="false" onAction="#removeSubject" text="Remove Subject" />
                <ColorPicker fx:id="colorPicker" layoutX="260.0" layoutY="114.0" onAction="#changeColor" prefHeight="23.0" prefWidth="65.0" />
-               <Rectangle fx:id="palette" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="43.0" layoutX="343.0" layoutY="104.0" stroke="#c6c3c3" strokeType="INSIDE" width="48.0" />
+                <Rectangle fx:id="palette" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="43.0" layoutX="343.0" layoutY="104.0" stroke="#c6c3c3" strokeType="INSIDE" width="48.0" />
                     <Button fx:id="startButton" layoutX="134.0" layoutY="23.0" mnemonicParsing="false" onAction="#toggleTimer" onKeyPressed="#toggleTimer" prefHeight="33.0" prefWidth="65.0" text="Start" />
                     <Button layoutX="246.0" layoutY="23.0" mnemonicParsing="false" onAction="#resetTimer" prefHeight="33.0" prefWidth="65.0" text="Reset" />
                <Label fx:id="errorLabel" layoutX="214.0" layoutY="78.0" prefHeight="15.0" prefWidth="36.0" />
