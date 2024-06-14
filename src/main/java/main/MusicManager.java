@@ -39,10 +39,17 @@ public class MusicManager {
         if (selectedSound.equals("None")) {
             soundPlayer = null;
         } else {
-            Media media = new Media(new File("src/main/resources/setting/sounds/" + selectedSound).toURI().toString());
-            soundPlayer = new MediaPlayer(media);
-            soundPlayer.setVolume(preferences.getDouble("soundVolume", 0.5));
-            soundPlayer.setOnEndOfMedia(() -> soundPlayer.seek(Duration.ZERO));
+            File soundFile = new File("src/main/resources/setting/sounds/" + selectedSound);
+            if (!soundFile.exists()) {
+                soundPlayer = null;
+                preferences.put("workingSound", "None");
+            }
+            else {
+                Media media = new Media(soundFile.toURI().toString());
+                soundPlayer = new MediaPlayer(media);
+                soundPlayer.setVolume(preferences.getDouble("soundVolume", 0.5));
+                soundPlayer.setOnEndOfMedia(() -> soundPlayer.seek(Duration.ZERO));
+            }
         }
     }
     public void setRing(String selectedSound) {
@@ -52,10 +59,16 @@ public class MusicManager {
         if (selectedSound.equals("None")) {
             ringPlayer = null;
         } else {
-            Media media = new Media(new File("src/main/resources/setting/rings/" + selectedSound).toURI().toString());
-            ringPlayer = new MediaPlayer(media);
-            ringPlayer.setVolume(preferences.getDouble("ringVolume", 0.5));
-
+            File ringFile = new File("src/main/resources/setting/rings/" + selectedSound);
+            if (!ringFile.exists()) {
+                ringPlayer = null;
+                preferences.put("ring", "None");
+            }
+            else {
+                Media media = new Media(ringFile.toURI().toString());
+                ringPlayer = new MediaPlayer(media);
+                ringPlayer.setVolume(preferences.getDouble("ringVolume", 0.5));
+            }
         }
     }
     public void setSoundVolume(double volume) {
