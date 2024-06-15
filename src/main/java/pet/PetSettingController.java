@@ -128,11 +128,6 @@ public class PetSettingController {
         // 預設加載所有圖片到drawingPane2中（初始化時可不顯示圖片）
         loadImagesIntoPane("src/main/resources/pet/decorateimg", 0);
 
-        anchorPane.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                handleSaveButtonAction();
-            }
-        });
     }
 
     @FXML
@@ -142,29 +137,26 @@ public class PetSettingController {
 
     @FXML
     private void handleSaveButtonAction() {
-
         String selectedSubject = petComboBox.getValue();
         String newName = petNameTextField.getText().trim();
 
-        if ( !newName.isEmpty() && selectedSubject != null ) {
-
-            // 保存寵物名
+        if (!newName.isEmpty() && selectedSubject != null) {
+            // 保存寵物名字
             String oldName = nameMap.get(selectedSubject);
             nameMap.put(selectedSubject, newName);
             DBQuery.saveData(subjectMap, colorMap, nameMap);
-            handleComboBoxAction();
 
-            // 保存圖片
+            // 截取 drawingPane1 的畫面作為圖片
             WritableImage image = drawingPane1.snapshot(new SnapshotParameters(), null);
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
 
-            String newFileName = newName + ".png";
+            // 構建文件名，根據選中的寵物名字
+            String fileName = newName + ".png";
+            File newImg = new File("src/main/resources/pet/records/" + fileName);
+
+            // 刪除舊的文件
             String oldFileName = oldName + ".png";
-
-            File newImg = new File("src/main/resources/pet/records/" + newFileName);
             File oldImg = new File("src/main/resources/pet/records/" + oldFileName);
-
-            // 删除舊的檔案
             if (oldImg.exists()) {
                 if (oldImg.delete()) {
                     System.out.println("Old snapshot deleted: " + oldImg.getAbsolutePath());
@@ -173,7 +165,7 @@ public class PetSettingController {
                 }
             }
 
-            // 保存新的檔案
+            // 儲存新的圖片文件
             try {
                 ImageIO.write(bufferedImage, "png", newImg);
                 System.out.println("Snapshot saved to: " + newImg.getAbsolutePath());
@@ -184,6 +176,7 @@ public class PetSettingController {
             System.out.println("請輸入有效的名稱");
         }
     }
+
 
 
 
