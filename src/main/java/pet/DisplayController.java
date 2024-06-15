@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -32,6 +33,9 @@ public class DisplayController {
 
     @FXML
     private Label infoLabel;
+
+    @FXML
+    private Label warning;
 
     private TextSetting textSettings;
 
@@ -70,14 +74,29 @@ public class DisplayController {
 
     public void updatePetComboBox() {
         try {
-            // 從資料庫中讀取寵物列表
+            // 從資料庫中讀取寵物列表 >> 只有有檔案的寵物才顯示
             Map<String, String> nameData = DBQuery.getNameData();
-            List<String> petNames = new ArrayList<>(nameData.values());
+            ArrayList existPetNames = new ArrayList<>();
+            for (String name : nameData.values()) {
+                String imagePath = "src/main/resources/pet/records/" + name + ".png";
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    existPetNames.add(name);
+                }
+            }
             // 更新 ComboBox 中的選項
-            petComboBox.getItems().setAll(petNames);
+            petComboBox.getItems().setAll(existPetNames);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("連接資料庫時發生錯誤：" + e.getMessage());
+        }
+        if (petComboBox.getItems().isEmpty()) { // 如果沒有任何寵物 >> 不可選擇
+            petComboBox.setDisable(true);
+            warning.setVisible(true);
+        }else{
+            petComboBox.setDisable(false);
+            Tooltip.uninstall(petComboBox, petComboBox.getTooltip());
+            warning.setVisible(false);
         }
     }
 
@@ -108,6 +127,7 @@ public class DisplayController {
             }
         });
     }
+
 
     private void updatePetImage(String petName) {
         String imagePath = "src/main/resources/pet/records/" + petName + ".png";

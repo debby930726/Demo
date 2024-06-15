@@ -21,5 +21,6 @@
         <Button fx:id="settingButton2" layoutX="148.0" layoutY="602.0" mnemonicParsing="false" onAction="#openSetting2" prefHeight="23.0" prefWidth="90.0" text="Text Setting" />
       <Button fx:id="updateButton" layoutX="255.0" layoutY="602.0" mnemonicParsing="false" onAction="#handleUpdateButtonAction" prefHeight="23.0" prefWidth="90.0" text="寵物資料同步" />
         <ComboBox fx:id="petComboBox" layoutX="119.0" layoutY="116.0" prefWidth="150.0" promptText="Choose the pet" />
+      <Label fx:id="warning" alignment="CENTER" contentDisplay="CENTER" layoutX="120.0" layoutY="82.0" prefHeight="15.0" prefWidth="150.0" text="( 請新增寵物！ )" textAlignment="CENTER" textFill="#1e097c" textOverrun="CLIP" />
     </children>
 </AnchorPane>

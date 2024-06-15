@@ -7,7 +7,7 @@
 <AnchorPane prefHeight="503.0" prefWidth="546.0" style="-fx-background-color: #EFEEE9;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pet.PetSettingController">
     <children>
         <!--<Button layoutX="334.0" layoutY="41.0" mnemonicParsing="false" text="更改名字" />-->
-        <ComboBox fx:id="petComboBox" layoutX="29.0" layoutY="41.0" prefWidth="150.0" promptText="Choose the pet" />
+        <ComboBox fx:id="petComboBox" layoutX="29.0" layoutY="41.0" prefWidth="150.0" promptText="Subject" />
         <TextField fx:id="petNameTextField" layoutX="280.0" layoutY="41.0" prefHeight="23.0" prefWidth="127.0" promptText="Pet's Name" />
         <Pane fx:id="drawingPane1" layoutX="29.0" layoutY="130.0" prefHeight="229.0" prefWidth="213.0">
         </Pane>

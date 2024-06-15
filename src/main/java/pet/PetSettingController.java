@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -94,19 +96,12 @@ public class PetSettingController {
         drawingPane2.getChildren().add(border2);
 
         petComboBox.setOnAction(event -> {
-            String selectedName = petComboBox.getValue();
-            if (selectedName != null) {
-                // 根據名稱獲取對應的顏色、名稱和番茄計數
-                String selectedPet = null;
-                for (Map.Entry<String, String> entry : nameMap.entrySet()) {
-                    if (entry.getValue().equals(selectedName)) {
-                        selectedPet = entry.getKey();
-                        break;
-                    }
-                }
-                Color color = colorMap.get(selectedPet);
-                String name = nameMap.get(selectedPet);
-                int tomatoCount = subjectMap.getOrDefault(selectedPet, 0);
+            String selectedSubject = petComboBox.getValue();
+            if (selectedSubject != null) {
+                // 根據科目獲取對應的顏色、名稱和番茄計數
+                Color color = colorMap.get(selectedSubject);
+                String name = nameMap.get(selectedSubject);
+                int tomatoCount = subjectMap.getOrDefault(selectedSubject, 0);
 
                 rectangle.setFill(color);
                 petNameTextField.setText(name);
@@ -132,63 +127,68 @@ public class PetSettingController {
 
         // 預設加載所有圖片到drawingPane2中（初始化時可不顯示圖片）
         loadImagesIntoPane("src/main/resources/pet/decorateimg", 0);
+
+        anchorPane.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleSaveButtonAction();
+            }
+        });
     }
 
     @FXML
     private void handleComboBoxAction() {
-        petComboBox.getItems().setAll(nameMap.values());
-    }
-
-    @FXML
-    private void handleAddButtonAction() {
-        String selectedPet = petComboBox.getValue();
-        String selectedKey = null;
-        String newName = petNameTextField.getText().trim();
-
-        // 遍歷 nameMap，找到對應的 key
-        for (Map.Entry<String, String> entry : nameMap.entrySet()) {
-            if (entry.getValue().equals(selectedPet)) {
-                selectedKey = entry.getKey(); // 獲取對應的 key
-                break;
-            }
-        }
-        if (selectedPet != null && selectedKey != null && !Objects.equals(newName, nameMap.get(selectedPet))) {
-            nameMap.put(selectedKey, newName);
-            DBQuery.saveData(subjectMap, colorMap, nameMap);
-            handleComboBoxAction();
-        }
+        petComboBox.getItems().setAll(nameMap.keySet());
     }
 
     @FXML
     private void handleSaveButtonAction() {
-        handleAddButtonAction();
 
-        String selectedPetName = petComboBox.getValue();
+        String selectedSubject = petComboBox.getValue();
         String newName = petNameTextField.getText().trim();
 
+        if ( !newName.isEmpty() && selectedSubject != null ) {
 
-        if (!newName.isEmpty()) {
+            // 保存寵物名
+            String oldName = nameMap.get(selectedSubject);
+            nameMap.put(selectedSubject, newName);
+            DBQuery.saveData(subjectMap, colorMap, nameMap);
+            handleComboBoxAction();
 
+            // 保存圖片
             WritableImage image = drawingPane1.snapshot(new SnapshotParameters(), null);
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
 
-            String fileName = newName + ".png";
-            File file = new File("src/main/resources/pet/records/" + fileName);
+            String newFileName = newName + ".png";
+            String oldFileName = oldName + ".png";
 
+            File newImg = new File("src/main/resources/pet/records/" + newFileName);
+            File oldImg = new File("src/main/resources/pet/records/" + oldFileName);
+
+            // 删除舊的檔案
+            if (oldImg.exists()) {
+                if (oldImg.delete()) {
+                    System.out.println("Old snapshot deleted: " + oldImg.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to delete old snapshot: " + oldImg.getAbsolutePath());
+                }
+            }
+
+            // 保存新的檔案
             try {
-                ImageIO.write(bufferedImage, "png", file);
-                System.out.println("Snapshot saved to: " + file.getAbsolutePath());
+                ImageIO.write(bufferedImage, "png", newImg);
+                System.out.println("Snapshot saved to: " + newImg.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         } else {
             System.out.println("請輸入有效的名稱");
         }
     }
 
+
+
     @FXML
-    private void handleUploadButtonAction() {
+    private void handleUploadButtonAction() {  // 上傳使用者的配件
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
@@ -202,7 +202,7 @@ public class PetSettingController {
                 String petName = petComboBox.getValue();
                 String fileName = petName + ".png";
 
-                File destinationFile = new File("src/main/resources/pet/records/" + fileName);
+                File destinationFile = new File("src/main/resources/pet/decorateimg/" + fileName);
                 ImageIO.write(bufferedImage, "png", destinationFile);
                 System.out.println("Image uploaded to: " + destinationFile.getAbsolutePath());
             } catch (IOException e) {
