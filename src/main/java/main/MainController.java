@@ -51,28 +51,13 @@ public class MainController {  // 跑主畫面
     }
 
     @FXML
-    private void SystemSettingClick(javafx.scene.input.MouseEvent event) {
-        if (settings == null) {
-            settings = new Settings();
-            try {
-                Stage stage = new Stage();
-                settings.start(stage);
-                stage.setAlwaysOnTop(true);
-                stage.setOnHidden(e -> settings = null); // 當視窗關閉時設置petSetting為null
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("已開啟視窗");
-        }
-    }
-    @FXML
     private void MusicSettingClick(javafx.scene.input.MouseEvent event) {
         if (settings == null) {
             settings = new Settings();
             try {
                 Stage stage = new Stage();
                 settings.start(stage);
+                stage.setAlwaysOnTop(true);
                 stage.setOnHidden(e -> settings = null); // 當視窗關閉時設置petSetting為null
             } catch (Exception e) {
                 e.printStackTrace();

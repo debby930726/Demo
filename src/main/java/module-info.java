@@ -2,6 +2,8 @@ module demo {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
+    requires javafx.media;
+    requires javafx.swing;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
@@ -10,15 +12,15 @@ module demo {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
-    requires javafx.media;
+
     requires java.prefs;
-    requires javafx.swing;
     requires java.sql;
+    requires java.base;
+    requires java.desktop;
+
     requires org.slf4j;
     requires org.slf4j.simple;
     requires org.xerial.sqlitejdbc;
-
-
 
     exports main;
     exports analysis;
@@ -29,5 +31,4 @@ module demo {
     opens analysis to javafx.fxml;
     opens setting to javafx.fxml;
     opens pet to javafx.fxml;
-
 }

@@ -2,19 +2,38 @@ package analysis;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBConnection {
-    private static final String DB_URL = "jdbc:sqlite:src/main/resources/db/main.db"; // 正確的資料庫連結URL
+    private static final String DB_NAME = "/db/main.db";
     private static Connection conn = null;
 
     public static Connection getConnection() throws SQLException {
-
         if (conn == null || conn.isClosed()) {
-            conn = DriverManager.getConnection(DB_URL);
+            try {
+                // 从 JAR 文件中提取数据库文件
+                InputStream dbStream = DBConnection.class.getResourceAsStream(DB_NAME);
+                if (dbStream == null) {
+                    throw new SQLException("Database file not found: " + DB_NAME);
+                }
+
+                // 创建一个临时文件
+                Path tempDbPath = Files.createTempFile("tempDb", ".db");
+                Files.copy(dbStream, tempDbPath, StandardCopyOption.REPLACE_EXISTING);
+
+                // 使用临时文件路径连接到数据库
+                String dbUrl = "jdbc:sqlite:" + tempDbPath.toString();
+                conn = DriverManager.getConnection(dbUrl);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new SQLException("Failed to copy database file", e);
+            }
         }
         return conn;
     }
