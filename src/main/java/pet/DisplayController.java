@@ -12,12 +12,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
+import java.io.InputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStreamReader;
+
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,12 +75,13 @@ public class DisplayController {
         try {
             // 從資料庫中讀取寵物列表 >> 只有有檔案的寵物才顯示
             Map<String, String> nameData = DBQuery.getNameData();
-            ArrayList existPetNames = new ArrayList<>();
+            ArrayList<String> existPetNames = new ArrayList<>();
             for (String name : nameData.values()) {
-                String imagePath = "src/main/resources/pet/records/" + name + ".png";
-                File imageFile = new File(imagePath);
-                if (imageFile.exists()) {
+                String imagePath = "records/" + name + ".png";  // 設置正確的資源路徑
+                InputStream is = getClass().getResourceAsStream(imagePath);  // 使用 ClassLoader 加載資源
+                if (is != null) {
                     existPetNames.add(name);
+                    is.close();  // 關閉 InputStream
                 }
             }
             // 更新 ComboBox 中的選項
@@ -93,12 +93,13 @@ public class DisplayController {
         if (petComboBox.getItems().isEmpty()) { // 如果沒有任何寵物 >> 不可選擇
             petComboBox.setDisable(true);
             warning.setVisible(true);
-        }else{
+        } else {
             petComboBox.setDisable(false);
             Tooltip.uninstall(petComboBox, petComboBox.getTooltip());
             warning.setVisible(false);
         }
     }
+
 
     @FXML
     private void handleComboBoxAction() {
@@ -114,7 +115,7 @@ public class DisplayController {
                     int tomatoCount = subjectData.getOrDefault(selectedPet, 0);
 
                     // 更新圖片和信息標籤
-                    updatePetImage(selectedPet.toLowerCase());
+                    updatePetImage(selectedPet);
                 } catch (Exception e) {
                     e.printStackTrace();
                     // 若發生錯誤，顯示警告訊息
@@ -130,26 +131,33 @@ public class DisplayController {
 
 
     private void updatePetImage(String petName) {
-        String imagePath = "src/main/resources/pet/records/" + petName + ".png";
-        File imageFile = new File(imagePath);
-        if (imageFile.exists()) {
-            Image image = new Image(imageFile.toURI().toString());
-            ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(imgpane.getPrefWidth());
-            imageView.setFitHeight(imgpane.getPrefHeight());
-            imageView.setOnMouseClicked(event1 -> handleImageClick(petName)); // 將點擊事件綁定到 handleImageClick 方法
-            imgpane.getChildren().clear();
-            imgpane.getChildren().add(imageView);
+        String imagePath = "records/" + petName + ".png";
 
-        } else {
-            // 若找不到圖片，顯示警告訊息
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("警告");
-            alert.setHeaderText("找不到寵物圖片");
-            alert.setContentText("請確認圖片是否存在：" + imagePath);
-            alert.showAndWait();
+
+        try {
+            // 使用 ClassLoader 加載資源
+            InputStream is = getClass().getResourceAsStream(imagePath);
+            if (is != null) {
+                Image image = new Image(is);
+                ImageView imageView = new ImageView(image);
+                imageView.setFitWidth(imgpane.getPrefWidth());
+                imageView.setFitHeight(imgpane.getPrefHeight());
+                imageView.setOnMouseClicked(event1 -> handleImageClick(petName)); // 將點擊事件綁定到 handleImageClick 方法
+                imgpane.getChildren().clear();
+                imgpane.getChildren().add(imageView);
+            } else {
+                // 若找不到圖片，顯示警告訊息
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("警告");
+                alert.setHeaderText("找不到寵物圖片");
+                alert.setContentText("請確認圖片是否存在：" + imagePath);
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 
     @FXML
     private void handleImageClick(String petName) {
@@ -168,11 +176,21 @@ public class DisplayController {
 
     private List<String> getRandomSentences() {
         List<String> sentences = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("src/main/resources/pet/records/textrecord.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.replaceAll("<br>", "\n"); // 將替換後的結果重新賦值給 line
-                sentences.add(line);
+        try {
+            // 使用 ClassLoader 加載資源
+            InputStream is = getClass().getResourceAsStream("records/textrecord.txt");
+            if (is != null) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    line = line.replaceAll("<br>", "\n"); // 將替換後的結果重新賦值給 line
+                    sentences.add(line);
+                }
+
+                br.close();  // 關閉 BufferedReader
+            } else {
+                System.out.println("找不到文本記錄文件: records/textrecord.txt");
             }
         } catch (IOException e) {
             e.printStackTrace();

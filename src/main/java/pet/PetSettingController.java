@@ -1,6 +1,7 @@
 package pet;
 
 import analysis.DBQuery;
+import java.net.URISyntaxException;
 import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
@@ -17,7 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import java.net.URL;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
 import java.io.IOException;
@@ -29,7 +30,15 @@ import java.io.File;
 import javafx.scene.SnapshotParameters;
 import java.awt.image.BufferedImage;
 import java.util.Map;
-import java.util.Objects;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 
 public class PetSettingController {
 
@@ -121,13 +130,12 @@ public class PetSettingController {
                 drawingPane2.getChildren().add(border2);
 
                 int imageCount = tomatoCount / 5;
-                loadImagesIntoPane("src/main/resources/pet/decorateimg", imageCount);
+                loadImagesIntoPane("decorateimg/", imageCount);
             }
         });
 
         // 預設加載所有圖片到drawingPane2中（初始化時可不顯示圖片）
-        loadImagesIntoPane("src/main/resources/pet/decorateimg", 0);
-
+        loadImagesIntoPane("decorateimg/", 0);
     }
 
     @FXML
@@ -152,11 +160,11 @@ public class PetSettingController {
 
             // 構建文件名，根據選中的寵物名字
             String fileName = newName + ".png";
-            File newImg = new File("src/main/resources/pet/records/" + fileName);
+            File newImg = new File("records/" + fileName);
 
             // 刪除舊的文件
             String oldFileName = oldName + ".png";
-            File oldImg = new File("src/main/resources/pet/records/" + oldFileName);
+            File oldImg = new File("records/" + oldFileName);
             if (oldImg.exists()) {
                 if (oldImg.delete()) {
                     System.out.println("Old snapshot deleted: " + oldImg.getAbsolutePath());
@@ -167,8 +175,17 @@ public class PetSettingController {
 
             // 儲存新的圖片文件
             try {
-                ImageIO.write(bufferedImage, "png", newImg);
-                System.out.println("Snapshot saved to: " + newImg.getAbsolutePath());
+                // 使用 ClassLoader 加載資源
+                ClassLoader classLoader = getClass().getClassLoader();
+                InputStream is = classLoader.getResourceAsStream("records/" + fileName);
+                if (is != null) {
+                    BufferedImage oldBufferedImage = ImageIO.read(is);
+                    ImageIO.write(oldBufferedImage, "png", newImg);
+                    System.out.println("Snapshot saved to: " + newImg.getAbsolutePath());
+                } else {
+                    ImageIO.write(bufferedImage, "png", newImg);
+                    System.out.println("Snapshot saved to: " + newImg.getAbsolutePath());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -176,7 +193,6 @@ public class PetSettingController {
             System.out.println("請輸入有效的名稱");
         }
     }
-
 
 
 
@@ -191,19 +207,23 @@ public class PetSettingController {
 
         if (selectedFile != null) {
             try {
-                BufferedImage bufferedImage = ImageIO.read(selectedFile);
                 String petName = petComboBox.getValue();
-                String fileName = petName + ".png";
+                File directory = new File(getClass().getResource("/pet/decorateimg").toURI());
+                int fileCount = directory.list().length;
 
-                File destinationFile = new File("src/main/resources/pet/decorateimg/" + fileName);
+                BufferedImage bufferedImage = ImageIO.read(selectedFile);
+                String fileName = (fileCount + 1) + ".png";
+
+                File destinationFile = new File(directory, fileName);
                 ImageIO.write(bufferedImage, "png", destinationFile);
                 System.out.println("Image uploaded to: " + destinationFile.getAbsolutePath());
-            } catch (IOException e) {
+            } catch (IOException | URISyntaxException e) {
                 e.printStackTrace();
                 System.out.println("Failed to upload image: " + e.getMessage());
             }
         }
     }
+
 
     private void enableDragAndDrop(Node node, boolean allowDrag) {
         if (allowDrag) {
@@ -238,28 +258,28 @@ public class PetSettingController {
                 }
             });
 
-        // 點選事件
-        node.setOnScroll(scrollEvent -> {
-            double scale = 1.05;
-            if (scrollEvent.getDeltaY() < 0) {
-                scale = 2.0 - scale;
-            }
+            // 點選事件
+            node.setOnScroll(scrollEvent -> {
+                double scale = 1.05;
+                if (scrollEvent.getDeltaY() < 0) {
+                    scale = 2.0 - scale;
+                }
 
-            node.setScaleX(node.getScaleX() * scale);
-            node.setScaleY(node.getScaleY() * scale);
+                node.setScaleX(node.getScaleX() * scale);
+                node.setScaleY(node.getScaleY() * scale);
 
-            if (node.getScaleX() < 0.5) {
-                node.setScaleX(0.5);
-            } else if (node.getScaleX() > 2) {
-                node.setScaleX(2);
-            }
-            if (node.getScaleY() < 0.5) {
-                node.setScaleY(0.5);
-            } else if (node.getScaleY() > 2) {
-                node.setScaleY(2);
-            }
-        });
-    } else {
+                if (node.getScaleX() < 0.5) {
+                    node.setScaleX(0.5);
+                } else if (node.getScaleX() > 2) {
+                    node.setScaleX(2);
+                }
+                if (node.getScaleY() < 0.5) {
+                    node.setScaleY(0.5);
+                } else if (node.getScaleY() > 2) {
+                    node.setScaleY(2);
+                }
+            });
+        } else {
             // 清除所有事件處理器
             node.setOnMousePressed(null);
             node.setOnMouseDragged(null);
@@ -272,41 +292,92 @@ public class PetSettingController {
     }
 
     private void loadImagesIntoPane(String directoryPath, int imageCountToShow) {
-        File directory = new File(directoryPath);
-        if (directory.exists() && directory.isDirectory()) {
-            File[] files = directory.listFiles((dir, name) -> name.endsWith(".png"));
-            if (files != null) {
-                int imageCount = 0;
-                double x = 10;
-                double y = 10;
-                for (File file : files) {
-                    if (imageCount >= imageCountToShow) {
-                        break;
-                    }
-                    Image image = new Image(file.toURI().toString());
-                    ImageView imageView= new ImageView(image);
-                    imageView.setFitWidth(70);
-                    imageView.setFitHeight(70);
-                    imageView.setLayoutX(x);
-                    imageView.setLayoutY(y);
-                    enableDragAndDrop(imageView, false); // 允許點選，不允許拖曳
-                    drawingPane2.getChildren().add(imageView);
-                    imageView.setOnMouseClicked(event -> handleImageClick(event));
-                    imageCount++;
-                    if (imageCount % 3 == 0) {
-                        x = 0;
-                        y += 83;
-                    } else {
-                        x += 80;
+        try {
+            // 取得資源目錄的 URL
+            URL resourceURL = getClass().getResource(directoryPath);
+            if (resourceURL == null) {
+                System.err.println("資源目錄未找到: " + directoryPath);
+                return;
+            }
+
+            // 取得資源目錄的 URI
+            URI resourceURI = resourceURL.toURI();
+
+            // 檢查 URI 是否為分層結構
+            if ("jar".equals(resourceURI.getScheme())) {
+                // 如果在 JAR 檔案中，我們需要以不同方式處理
+                try (FileSystem fileSystem = FileSystems.newFileSystem(resourceURI, Collections.emptyMap())) {
+                    Path resourcePath = fileSystem.getPath(directoryPath);
+                    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(resourcePath)) {
+                        int count = 0;
+                        double x = 10;
+                        double y = 10;
+                        for (Path path : directoryStream) {
+                            if (count >= imageCountToShow) {
+                                break;
+                            }
+                            try (InputStream is = Files.newInputStream(path)) {
+                                Image image = new Image(is);
+                                // 在這裡將 image 添加到 Pane 中，设置位置：
+                                ImageView imageView = new ImageView(image);
+                                imageView.setFitWidth(70);
+                                imageView.setFitHeight(70);
+                                imageView.setLayoutX(x);
+                                imageView.setLayoutY(y);
+                                enableDragAndDrop(imageView, false); // 允許點選，不允許拖曳
+                                drawingPane2.getChildren().add(imageView); // 根據你的 UI 結構，將 imageView 添加到對應的 Pane 中
+                                imageView.setOnMouseClicked(event -> handleImageClick(event));
+
+                                count++;
+                                if (count % 3 == 0) {
+                                    x = 10; // 修正為開頭位置
+                                    y += 83;
+                                } else {
+                                    x += 80;
+                                }
+                            }
+                        }
                     }
                 }
             } else {
-                System.out.println("No PNG images found in the directory.");
+                // 如果不是在 JAR 檔案中，直接訪問文件系統
+                Path resourcePath = Paths.get(resourceURI);
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(resourcePath)) {
+                    int count = 0;
+                    double x = 10;
+                    double y = 10;
+                    for (Path path : directoryStream) {
+                        if (count >= imageCountToShow) {
+                            break;
+                        }
+                        try (InputStream is = Files.newInputStream(path)) {
+                            Image image = new Image(is);
+                            // 在這裡將 image 添加到 Pane 中，设置位置：
+                            ImageView imageView = new ImageView(image);
+                            imageView.setFitWidth(70);
+                            imageView.setFitHeight(70);
+                            imageView.setLayoutX(x);
+                            imageView.setLayoutY(y);
+                            enableDragAndDrop(imageView, false); // 允許點選，不允許拖曳
+                            drawingPane2.getChildren().add(imageView); // 根據你的 UI 結構，將 imageView 添加到對應的 Pane 中
+                            imageView.setOnMouseClicked(event -> handleImageClick(event));
+
+                            count++;
+                            if (count % 3 == 0) {
+                                x = 10; // 修正為開頭位置
+                                y += 83;
+                            } else {
+                                x += 80;
+                            }
+                        }
+                    }
+                }
             }
-        } else {
-            System.out.println("Invalid directory path.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 
     private void handleImageClick(MouseEvent event) {
         ImageView sourceImageView = (ImageView) event.getSource();
@@ -328,4 +399,3 @@ public class PetSettingController {
         });
     }
 }
-
