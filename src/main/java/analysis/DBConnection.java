@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBConnection {
-    private static final String DB_NAME = "/db/main.db";
+    private static final String DB_NAME = "/db/main.sqlite";
     private static Connection conn = null;
 
     public static Connection getConnection() throws SQLException {
@@ -24,7 +24,7 @@ public class DBConnection {
                 }
 
                 // 创建一个临时文件
-                Path tempDbPath = Files.createTempFile("tempDb", ".db");
+                Path tempDbPath = Files.createTempFile("tempDb", ".sqlite");
                 Files.copy(dbStream, tempDbPath, StandardCopyOption.REPLACE_EXISTING);
 
                 // 使用临时文件路径连接到数据库

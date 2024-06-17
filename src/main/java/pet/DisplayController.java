@@ -164,7 +164,7 @@ public class DisplayController {
         // 設置 Label 的文本為圖片名字
         String labelText = petName + "：";
 
-        // 從 textrecord.txt 中讀取一句話
+        // 從 main.sqlite 取一句話
         String randomSentence = getRandomSentence();
 
         // 將讀取的句子添加到 Label 的文本後面
@@ -174,32 +174,8 @@ public class DisplayController {
         infoLabel.setText(labelText);
     }
 
-    private List<String> getRandomSentences() {
-        List<String> sentences = new ArrayList<>();
-        try {
-            // 使用 ClassLoader 加載資源
-            InputStream is = getClass().getResourceAsStream("records/textrecord.txt");
-            if (is != null) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-                String line;
-                while ((line = br.readLine()) != null) {
-                    line = line.replaceAll("<br>", "\n"); // 將替換後的結果重新賦值給 line
-                    sentences.add(line);
-                }
-
-                br.close();  // 關閉 BufferedReader
-            } else {
-                System.out.println("找不到文本記錄文件: records/textrecord.txt");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sentences;
-    }
-
     private String getRandomSentence() {
-        List<String> sentences = getRandomSentences();
+        List<String> sentences = DBQuery.getPetDialogues();
         if (!sentences.isEmpty()) {
             // 隨機生成索引以選擇一個句子
             int randomIndex = new Random().nextInt(sentences.size());

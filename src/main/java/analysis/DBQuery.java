@@ -100,4 +100,48 @@ public class DBQuery {
     private static Color stringToColor(String value) {
         return Color.web(value);
     }
+
+    public static List<String> getPetDialogues() {
+        List<String> dialogues = new ArrayList<>();
+        String query = "SELECT dialogue FROM petDialogues";
+
+        try (Connection connection = DBConnection.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+
+            while (resultSet.next()) {
+                String dialogue = resultSet.getString("dialogue");
+                dialogues.add(dialogue.replaceAll("<br>", "\n"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return dialogues;
+    }
+
+    public static void addPetDialogue(String dialogue) {
+        String sql = "INSERT INTO petDialogues (dialogue) VALUES (?)";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, dialogue);
+            pstmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void removePetDialogue(String dialogue) {
+        String sql = "DELETE FROM petDialogues WHERE dialogue = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, dialogue);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
