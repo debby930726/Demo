@@ -158,13 +158,21 @@ public class PetSettingController {
             WritableImage image = drawingPane1.snapshot(new SnapshotParameters(), null);
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
 
-            // 構建文件名，根據選中的寵物名字
+            // 構建文件夾和文件名，根據選中的寵物名字
+            File directory = new File("C:/petrecord");
+
+            // 檢查是否存在名為 petrecord 的資料夾
+            if (!directory.exists()) {
+                // 如果不存在就創建這個資料夾
+                directory.mkdir();
+            }
+
             String fileName = newName + ".png";
-            File newImg = new File("records/" + fileName);
+            File newImg = new File(directory, fileName);
 
             // 刪除舊的文件
             String oldFileName = oldName + ".png";
-            File oldImg = new File("records/" + oldFileName);
+            File oldImg = new File(directory, oldFileName);
             if (oldImg.exists()) {
                 if (oldImg.delete()) {
                     System.out.println("Old snapshot deleted: " + oldImg.getAbsolutePath());
@@ -175,17 +183,8 @@ public class PetSettingController {
 
             // 儲存新的圖片文件
             try {
-                // 使用 ClassLoader 加載資源
-                ClassLoader classLoader = getClass().getClassLoader();
-                InputStream is = classLoader.getResourceAsStream("records/" + fileName);
-                if (is != null) {
-                    BufferedImage oldBufferedImage = ImageIO.read(is);
-                    ImageIO.write(oldBufferedImage, "png", newImg);
-                    System.out.println("Snapshot saved to: " + newImg.getAbsolutePath());
-                } else {
-                    ImageIO.write(bufferedImage, "png", newImg);
-                    System.out.println("Snapshot saved to: " + newImg.getAbsolutePath());
-                }
+                ImageIO.write(bufferedImage, "png", newImg);
+                System.out.println("Snapshot saved to: " + newImg.getAbsolutePath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -193,6 +192,7 @@ public class PetSettingController {
             System.out.println("請輸入有效的名稱");
         }
     }
+
 
 
 

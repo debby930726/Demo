@@ -1,6 +1,7 @@
 package pet;
 
 import analysis.DBQuery;
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
@@ -77,11 +78,10 @@ public class DisplayController {
             Map<String, String> nameData = DBQuery.getNameData();
             ArrayList<String> existPetNames = new ArrayList<>();
             for (String name : nameData.values()) {
-                String imagePath = "records/" + name + ".png";  // 設置正確的資源路徑
-                InputStream is = getClass().getResourceAsStream(imagePath);  // 使用 ClassLoader 加載資源
-                if (is != null) {
+                String imagePath = "C:/petrecord/" + name + ".png";  // 設置正確的資源路徑
+                File imageFile = new File(imagePath);  // 檢查文件系統中的圖片文件
+                if (imageFile.exists()) {
                     existPetNames.add(name);
-                    is.close();  // 關閉 InputStream
                 }
             }
             // 更新 ComboBox 中的選項
@@ -131,14 +131,12 @@ public class DisplayController {
 
 
     private void updatePetImage(String petName) {
-        String imagePath = "records/" + petName + ".png";
-
+        String imagePath = "C:/petrecord/" + petName + ".png";
 
         try {
-            // 使用 ClassLoader 加載資源
-            InputStream is = getClass().getResourceAsStream(imagePath);
-            if (is != null) {
-                Image image = new Image(is);
+            File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                Image image = new Image(imageFile.toURI().toString());
                 ImageView imageView = new ImageView(image);
                 imageView.setFitWidth(imgpane.getPrefWidth());
                 imageView.setFitHeight(imgpane.getPrefHeight());
@@ -157,6 +155,7 @@ public class DisplayController {
             e.printStackTrace();
         }
     }
+
 
 
     @FXML
