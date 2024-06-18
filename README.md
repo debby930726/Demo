@@ -19,8 +19,9 @@
 > - 原先是用txt的方式儲存，後來更新為SQLite資料庫 >> 【 資料庫連結 】<br/>
 - - -
 ### ◤ 操作方式
-#### 1 ) 請先下至 (https://gluonhq.com/products/javafx/)下載Javafx SDK
-#### 2 ) 在cmd輸入(java --module-path "Javafx SDK的lib路徑" --add-modules=javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web -jar 第21組_讀生友伴_Java2024.jar)
+
+#### 1 ) 請先下至 https://gluonhq.com/products/javafx/  下載Javafx SDK
+#### 2 ) 在cmd輸入java --module-path "Javafx SDK的lib路徑" --add-modules=javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web -jar 第21組_讀生友伴_Java2024.jar
 - - -
 ### ◤ 相關資料
 
