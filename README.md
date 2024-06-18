@@ -27,7 +27,7 @@
 
 ####  1 ) [期中提案](https://www.canva.com/design/DAGCfSAW4pQ/xMY6-8v5E4iNK_BbMBxBMw/view?utm_content=DAGCfSAW4pQ&utm_campaign=designshare&utm_medium=link&utm_source=editor)
 ####  2 ) [期末報告](https://www.canva.com/design/DAGGpcc_enM/xPmbXI4GoXoNIz0eK5WsXQ/view?utm_content=DAGGpcc_enM&utm_campaign=designshare&utm_medium=link&utm_source=editor)
-####  3 ) [ 執行檔 ]([https://www.youtube.com/watch?v=yH9X6jIbIZI](https://drive.google.com/file/d/1dDCOhOlTukWETxnlVyx-e635bNI6ZJie/view?usp=sharing))
+####  3 ) [ 執行檔 ](https://drive.google.com/file/d/1dDCOhOlTukWETxnlVyx-e635bNI6ZJie/view?usp=sharing)
 ####  4 ) [ DEMO 影片 ](https://www.youtube.com/watch?v=yH9X6jIbIZI)
 
 - - -
